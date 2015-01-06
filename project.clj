@@ -1,0 +1,11 @@
+(defproject hobbes "0.1.0-SNAPSHOT"
+  :description "Compiler transforming courses in .hob format to beautiful, local, static sites."
+  :url "http://hobbes-lang.herokuapp.com"
+  :license {:name "GNU/GPL v3"
+            :url "http://www.gnu.org/licenses/gpl-3.0.html"}
+  :dependencies [[org.clojure/clojure "1.6.0"]
+                 [seesaw "1.4.4" :exclusions [org.clojure/clojure]]
+                 [instaparse "1.3.5"]]
+  :main ^:skip-aot hobbes.core
+  :target-path "target/%s"
+  :profiles {:uberjar {:aot :all}})
