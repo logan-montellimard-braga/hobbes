@@ -4,7 +4,8 @@
   :license {:name "GNU/GPL v3"
             :url "http://www.gnu.org/licenses/gpl-3.0.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [seesaw "1.4.4" :exclusions [org.clojure/clojure]]
+                 [org.clojure/tools.cli "0.3.1"]
+                 [seesaw "1.4.5" :exclusions [org.clojure/clojure]]
                  [instaparse "1.3.5"]]
   :main ^:skip-aot hobbes.core
   :target-path "target/%s"
