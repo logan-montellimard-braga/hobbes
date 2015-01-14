@@ -31,8 +31,7 @@
   "Parse input.
   Returns an instaparse AST suitable for transformation."
   [input]
-  (->>
-    input
-    (prep/preprocess)
-    (parse-blocks)
-    (parse-spans)))
+  (->> input
+       (prep/preprocess)
+       (parse-blocks)
+       (parse-spans)))
