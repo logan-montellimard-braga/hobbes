@@ -4,13 +4,13 @@
 
 (deftest remove-comments
   (testing "Cleaning comments from string input"
-    (is (= []
+    (is (= ""
            (#'hobbes.preprocessor/remove-comments "!! Commented !"))))
-  (testing "Cleaning comments from coll input"
-    (is (= ["Not comment"]
-           (#'hobbes.preprocessor/remove-comments '("Not comment" "!! com" "!! too")))))
+  (testing "Cleaning inline comment from string input"
+    (is (= "Hey "
+           (#'hobbes.preprocessor/remove-comments "Hey !* Commented *!"))))
   (testing "Cleaning comments in string input without comments"
-    (is (= ["Untouched."]
+    (is (= "Untouched."
            (#'hobbes.preprocessor/remove-comments "Untouched.")))))
 
 (deftest add-padding-newlines

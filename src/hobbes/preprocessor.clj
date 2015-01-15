@@ -5,14 +5,16 @@
 
 
 ; Treat input formatting
-(def ^:private comment-pattern #"^\s*!!.*")
+(def ^:private comment-pattern #"(?m)!!.*$")
+(def ^:private inline-comment-pattern #"(!\*.+\*!)")
 
 (defn- remove-comments
-  "Remove comment lines from input, be it a string or a coll of strings.
-  Returns a coll."
+  "Remove comment blocs from input (contained and rest-of-line) string.
+  Returns a string."
   [input]
-  (let [coll (if (coll? input) input (vector input))]
-    (remove #(re-matches comment-pattern %) coll)))
+  (-> input
+      (s/replace comment-pattern "")
+      (s/replace inline-comment-pattern "")))
 
 (defn- add-padding-newlines
   "Add newlines to end of string if needed, to correctly treat last element,
@@ -29,8 +31,8 @@
   Returns the treated string input."
   [abbrs string]
   (-> abbrs
-       (add-prefix-to-map-keys "~")
-       (map-replace string)))
+      (add-prefix-to-map-keys "~")
+      (map-replace string)))
 
 
 ; Public API
@@ -41,7 +43,8 @@
   (->> input
        (expand-abbrevs abbr-map)
        (s/split-lines)
-       (remove-comments)
+       (map remove-comments)
        (map s/trim)
+       (remove #(s/blank? %))
        (s/join "\n")
        (add-padding-newlines)))
