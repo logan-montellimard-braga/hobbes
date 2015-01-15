@@ -51,6 +51,6 @@
          (s/split-lines)
          (map remove-comments)
          (map s/trim)
-         (remove #(s/blank? %))
+         (remove s/blank?)
          (s/join "\n")
          (add-padding-newlines))))
