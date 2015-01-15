@@ -33,7 +33,12 @@
   (testing "Input has abbreviation pattern and abbr map."
     (is (= "Something changed."
            (#'hobbes.preprocessor/expand-abbrevs {:Nothing :Something}
-                                                 "~Nothing changed.")))))
+                                                 "~Nothing changed."))))
+  (testing "Input has abbreviation pattern and abbr map with several keys."
+    (is (= "Something happened."
+           (#'hobbes.preprocessor/expand-abbrevs {:Nothing :Something
+                                                  :changed :happened}
+                                                 "~Nothing ~changed.")))))
 
 
 (deftest putting-it-all-together
