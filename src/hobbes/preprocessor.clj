@@ -3,6 +3,7 @@
   (:require [clojure.string :as s]
             [hobbes.utils :refer :all]))
 
+
 ; Treat input formatting
 (def ^:private comment-pattern #"^\s*!!.*")
 
@@ -26,7 +27,7 @@
 (defn- expand-abbrevs
   "Take a string input and a map of abbreviations, and expands all of them.
   Returns the treated string input."
-  [string abbrs]
+  [abbrs string]
   (-> abbrs
        (add-prefix-to-map-keys "~")
        (map-replace string)))
@@ -36,8 +37,9 @@
 (defn preprocess
   "Preprocess input, making it suitable to parse.
   Returns the treated input as string."
-  [input]
+  [input abbr-map]
   (->> input
+       (expand-abbrevs abbr-map)
        (s/split-lines)
        (remove-comments)
        (map s/trim)
