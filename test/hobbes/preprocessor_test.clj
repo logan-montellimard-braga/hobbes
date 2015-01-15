@@ -18,7 +18,7 @@
     (is (= "Not yet\n\n"
            (#'hobbes.preprocessor/add-padding-newlines "Not yet")))))
 
-(deftest expand-abbrevs
+(deftest expand-abbrevs ; same for expand-runtime-variables
   (testing "Input has no abbreviation pattern and no abbr map."
     (is (= "Nothing changed."
            (#'hobbes.preprocessor/expand-abbrevs {} "Nothing changed."))))

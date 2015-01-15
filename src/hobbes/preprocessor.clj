@@ -25,26 +25,32 @@
   (str input "\n\n"))
 
 
-; Expand abbreviations
-(defn- expand-abbrevs
+; Expand abbreviations and runtime variables
+(defn- expand-map-in-str
   "Take a string input and a map of abbreviations, and expands all of them.
   Returns the treated string input."
-  [abbrs string]
-  (-> abbrs
-      (add-prefix-to-map-keys "~")
+  [prefix m string]
+  (-> m
+      (add-prefix-to-map-keys prefix)
       (map-replace string)))
+
+(def ^:private expand-abbrevs (partial expand-map-in-str "~"))
+(def ^:private expand-runtime-variables (partial expand-map-in-str "="))
 
 
 ; Public API
 (defn preprocess
   "Preprocess input, making it suitable to parse.
-  Returns the treated input as string."
-  [input abbr-map]
-  (->> input
-       (expand-abbrevs abbr-map)
-       (s/split-lines)
-       (map remove-comments)
-       (map s/trim)
-       (remove #(s/blank? %))
-       (s/join "\n")
-       (add-padding-newlines)))
+  Returns the treated input as a string."
+  [input & [abbr-map variables-map]]
+  (let [abbrs (or abbr-map {})
+        vars  (or variables-map {})]
+    (->> input
+         (expand-abbrevs abbrs)
+         (expand-runtime-variables vars)
+         (s/split-lines)
+         (map remove-comments)
+         (map s/trim)
+         (remove #(s/blank? %))
+         (s/join "\n")
+         (add-padding-newlines))))
