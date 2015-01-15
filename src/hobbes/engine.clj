@@ -1,8 +1,7 @@
 (ns hobbes.engine
-  "Engine used to preprocess and parse .hob input and return a parse tree for 
+  "Engine used to parse .hob input and return a parse tree for 
   further processing."
-  (:require [instaparse.core :as insta]
-            [hobbes.preprocessor :as prep]))
+  (:require [instaparse.core :as insta]))
 
 
 (def ^:private grammar-specifications
@@ -29,9 +28,9 @@
 
 (defn parse
   "Parse input.
+  Input must be treated beforehand; see preprocessor namespace.
   Returns an instaparse AST suitable for transformation."
   [input]
   (->> input
-       (prep/preprocess)
        (parse-blocks)
        (parse-spans)))
