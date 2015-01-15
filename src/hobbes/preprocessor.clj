@@ -27,7 +27,8 @@
 
 ; Expand abbreviations and runtime variables
 (defn- expand-map-in-str
-  "Take a string input and a map of abbreviations, and expands all of them.
+  "Take a prefix, a string input and a map of k v, and replace tokens
+  in input equal to <prefix>k with corresponding v.
   Returns the treated string input."
   [prefix m string]
   (-> m
@@ -46,10 +47,10 @@
   (let [abbrs (or abbr-map {})
         vars  (or variables-map {})]
     (->> input
+         (remove-comments)
          (expand-abbrevs abbrs)
          (expand-runtime-variables vars)
          (s/split-lines)
-         (map remove-comments)
          (map s/trim)
          (remove s/blank?)
          (s/join "\n")
