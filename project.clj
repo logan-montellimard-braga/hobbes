@@ -7,6 +7,7 @@
                  ; [org.clojure/tools.cli "0.3.1"]
                  ; [seesaw "1.4.5" :exclusions [org.clojure/clojure]]
                  [instaparse "1.3.5"]]
+  :bin {:name "hobbes"}
   :main ^:skip-aot hobbes.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
