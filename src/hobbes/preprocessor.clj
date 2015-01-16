@@ -5,8 +5,15 @@
 
 
 ; Treat input formatting
-(def ^:private comment-pattern #"(?m)!!.*$")
-(def ^:private inline-comment-pattern #"(!\*.+\*!)")
+(def ^:private comment-pattern
+  "Regex to match a rest-of-line comment, eg. 'Not commented !! commented'"
+  #"(?m)!!.*$")
+
+(def ^:private contained-comment-pattern
+  "Regex to match contained comment, be it mono or multiline.
+  Everything between !* and *! is treated as a comment,
+  eg. 'Not commented !* commented *!.'"
+  #"(!\*.+\*!)")
 
 (defn- remove-comments
   "Remove comment blocs from input (contained and rest-of-line) string.
@@ -14,7 +21,7 @@
   [input]
   (-> input
       (s/replace comment-pattern "")
-      (s/replace inline-comment-pattern "")))
+      (s/replace contained-comment-pattern "")))
 
 (defn- add-padding-newlines
   "Add newlines to end of string if needed, to correctly treat last element,
@@ -35,8 +42,13 @@
       (add-prefix-to-map-keys prefix)
       (map-replace string)))
 
-(def ^:private expand-abbrevs (partial expand-map-in-str "~"))
-(def ^:private expand-runtime-variables (partial expand-map-in-str "="))
+(def ^:private expand-abbrevs
+  "Abbreviations start with a ~ (tilde)."
+  (partial expand-map-in-str "~"))
+
+(def ^:private expand-runtime-variables
+  "Runtime variables start with a =."
+  (partial expand-map-in-str "="))
 
 
 ; Public API
