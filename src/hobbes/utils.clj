@@ -21,3 +21,12 @@
    (into (empty m)
          (for [[k v] m]
            [(str prefix (name k)) v]))))
+
+(defn lower-keyword
+  "Takes a keyword as input and lowercase it, converting it back to keyword.
+  Returns a keyword"
+  [k]
+  (->> k
+       (name)
+       (s/lower-case)
+       (keyword)))
