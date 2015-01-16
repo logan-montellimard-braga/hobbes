@@ -53,14 +53,14 @@
 
 ; Public API
 (defn preprocess
-  "Preprocess input, making it suitable to parse.
+  "Preprocess string input, making it suitable to parse.
   Returns the treated input as a string."
   [input & [abbr-map variables-map]]
   (let [abbrs (or abbr-map {})
         vars  (or variables-map {})]
     (->> input
+         (s/trim)
          (remove-comments)
          (expand-abbrevs abbrs)
          (expand-runtime-variables vars)
-         (s/trim)
          (add-padding-newlines))))
