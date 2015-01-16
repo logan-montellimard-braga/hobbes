@@ -7,7 +7,7 @@
 ; Treat input formatting
 (def ^:private comment-pattern
   "Regex to match a rest-of-line comment, eg. 'Not commented !! commented'"
-  #"(?m)!!.*$")
+  #"(?m)!!.+$")
 
 (def ^:private contained-comment-pattern
   "Regex to match contained comment, be it mono or multiline.
