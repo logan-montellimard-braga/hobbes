@@ -9,6 +9,8 @@
                  [enlive "1.1.5"]
                  [instaparse "1.3.5"]]
   :bin {:name "hobbes"}
+  :codox {:src-dir-uri "http://github.com/loganbraga/hobbes/blob/master/"
+          :src-linenum-anchor-prefix "L"}
   :main ^:skip-aot hobbes.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
