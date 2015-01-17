@@ -32,3 +32,8 @@
   (testing "Map and prefix."
     (is (= {"pre-foo" :bar, "pre-baz" :quux}
            (add-prefix-to-map-keys {:foo :bar :baz :quux} "pre-")))))
+
+(deftest lower-keyword-test
+  (testing "Keyword input"
+    (is (= :foo
+           (lower-keyword :FoO)))))
