@@ -23,13 +23,15 @@
       (s/replace comment-pattern "")
       (s/replace contained-comment-pattern "")))
 
+; Has own method for now cause implementation is really subject to change
+; Soon to be deprecated, certainly
 (defn- add-padding-newlines
   "Add newlines to end of string if needed, to correctly treat last element,
   because special elements at end of input (ie: not paragraphs) are treated as 
   paragraphs by the parser if there is no 2 trailing newlines after them.
   Returns the treated input."
   [input]
-  (str input "\n\n"))
+  (str input "\n"))
 
 
 ; Expand abbreviations and runtime variables
@@ -61,6 +63,9 @@
     (->> input
          (s/trim)
          (remove-comments)
+         (s/split-lines)
+         (map s/trim)
+         (s/join "\n")
          (expand-abbrevs abbrs)
          (expand-runtime-variables vars)
          (add-padding-newlines))))

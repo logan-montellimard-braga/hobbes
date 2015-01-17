@@ -15,7 +15,7 @@
 
 (deftest add-padding-newlines
   (testing "Input has no padding newlines."
-    (is (= "Not yet\n\n"
+    (is (= "Not yet\n"
            (#'hobbes.preprocessor/add-padding-newlines "Not yet")))))
 
 (deftest expand-abbrevs ; same for expand-runtime-variables
@@ -43,6 +43,6 @@
 
 (deftest putting-it-all-together
   (testing "Preprocessing multiline input."
-    (is (= "Trimmed,\nno comments,\nnew-padding.\n\n"
+    (is (= "Trimmed,\nno comments,\nnew-padding.\n"
            (preprocess "  \tTrimmed,!!comment\nno comments,\n~padding."
                        {:padding :new-padding})))))
