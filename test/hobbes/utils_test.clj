@@ -37,3 +37,19 @@
   (testing "Keyword input"
     (is (= :foo
            (lower-keyword :FoO)))))
+
+(deftest flatten-if-seq-test
+  (testing "Input is a seq"
+    (is (= '("foo" "bar")
+           (flatten-if-seq '("foo" ("bar"))))))
+  (testing "Input is not a seq"
+    (is (= "foo"
+           (flatten-if-seq "foo")))))
+
+(deftest find-first-test
+  (testing "Input has no wanted value"
+    (is (= nil
+           (find-first identity [nil false nil]))))
+  (testing "Input has a wanted value"
+    (is (= 1
+           (find-first identity [nil false 1 nil true])))))
