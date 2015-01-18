@@ -1,0 +1,40 @@
+<ROOT>       ::= BLANKLINE* (TPARAGRAPH
+                                | PARAGRAPH
+                                | HEADER
+                                | ULIST
+                                | OLIST
+                                | RULE)*
+
+HEADER       ::= <LINEPRE> HEADERSYM <WHITESPACE> LINE <BLANKLINE>?
+<HEADERSYM>  ::= H1 | H2 | H3 | H4 | H5 | H6
+H1           ::= <"_" HBASE "1"?>
+H2           ::= <"_s" HBASE     | "_" HBASE "2">
+H3           ::= <"_ss" HBASE    | "_" HBASE "3">
+H4           ::= <"_sss" HBASE   | "_" HBASE "4">
+H5           ::= <"_ssss" HBASE  | "_" HBASE "5">
+H6           ::= <"_sssss" HBASE | "_" HBASE "6">
+<HBASE>      ::= #"(?i)t(i(t(r(e)?)?)?)?"
+
+ULIST        ::= ULISTLINE+ <BLANKLINE>+
+ULISTLINE    ::= <ULISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* <EOL>
+<ULISTSYM>   ::= '+'| '*' | '-' | ':' | '%' | '$' | '&' | '~' | '#'
+
+OLIST        ::= OLISTLINE+ BLANKLINE+
+OLISTLINE    ::= <OLISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* EOL
+<OLISTSYM>   ::= <#'[0-9]+\.'>
+
+RULE         ::= <LINEPRE> <RULESYM> <RULESYM> <RULESYM> <RULESYM>* <BLANKLINE>+
+<RULESYM>    ::= '+'| '*' | '-' | ':' | '%' | '$' | '&' | '~' | '#' | "'"
+
+PARAGRAPH    ::= LINE+ BLANKLINE+
+TPARAGRAPH   ::= LINE
+
+<BLANKLINE>  ::= WHITESPACE* EOL
+<LINE>       ::= (<TAB> | LINEPRE WORD) (WHITESPACE WORD)* LINEPOST EOL
+<LINEPRE>    ::= (SPACE (SPACE (SPACE)? )? )?
+<LINEPOST>   ::= SPACE?
+<WHITESPACE> ::= (SPACE | TAB)+
+<SPACE>      ::= ' '
+<TAB>        ::= <'\t'>
+<WORD>       ::= #'\S+'
+<EOL>        ::= <'\r'> | <'\n'> | <'\r\n'>
