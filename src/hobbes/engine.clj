@@ -17,10 +17,11 @@
                 :output-format :enlive))
 
 (def ^:private span-regexs
-  "Vectors of t,r,a containing all possible inline element, where t is the tag of
-  the element, r is the regex to extract it and a is a function returning
-  the map of attributes to give to the element once parsed (use of functions
-  instead of direct map to allow for closures from the parser)."
+  "Vectors of [t, r, a] containing all possible inline element,
+  where t is the tag of the element, r is the regex to extract it
+  and a is a function returning the map of attributes to give to the element
+  once parsed (use of functions instead of direct map to allow for closures
+  from the parser)."
   (let [null-f (fn [& _] nil)]
     [[:b    #"(.*)\*([^\*]+)\*(.*)" null-f]
      [:i    #"(.*)/([^/]+)/(.*)"    null-f]
@@ -31,8 +32,8 @@
      [:code #"(.*)<([^>]+)>(.*)"    null-f]]))
 
 (defn- parse-spans
-  "Parse an instaparse AST of blocks to delimit spans (bold, em, ...).
-  Returns a final, instaparse AST containing blocks with spans."
+  "Parse a string to delimit spans (bold, em, ...).
+  Returns a constructed map output in enlive format containing spans."
   [input]
   (if-let [span (find-first identity (for [[tag re attrs] span-regexs]
                                        (if-let [match (re-matches re input)]
