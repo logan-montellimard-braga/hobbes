@@ -53,3 +53,8 @@
   (testing "Input has a wanted value"
     (is (= 1
            (find-first identity [nil false 1 nil true])))))
+
+(deftest parse-props-test
+  (testing "File does not exist"
+    (is (= {}
+           (parse-props "sqsKJSkkdksd")))))
