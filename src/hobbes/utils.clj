@@ -30,3 +30,17 @@
        (name)
        (s/lower-case)
        (keyword)))
+
+(defn flatten-if-seq
+  "Takes a seq or a non-seq elem, and flattens it if it is a seq, otherwise
+  returns the original input."
+  [input]
+  (if (seq? input)
+    (flatten input)
+    input))
+
+(defn find-first
+  "Takes a function and a coll and returns the first element of coll for
+  which f returns true. Otherwise, returns nil."
+  [f coll]
+  (first (filter f coll)))
