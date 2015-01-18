@@ -2,6 +2,9 @@
   "Utility functions."
   (:require [clojure.string :as s]))
 
+;;;
+; Seqs utilities
+;;;
 (defn map-replace
   "Takes a map of {k v} and a string and replaces every occurence of k with v
   in the string, for each k, v in the map. k and v may be keywords or strings.
@@ -22,15 +25,6 @@
          (for [[k v] m]
            [(str prefix (name k)) v]))))
 
-(defn lower-keyword
-  "Takes a keyword as input and lowercase it, converting it back to keyword.
-  Returns a keyword"
-  [k]
-  (->> k
-       (name)
-       (s/lower-case)
-       (keyword)))
-
 (defn flatten-if-seq
   "Takes a seq or a non-seq elem, and flattens it if it is a seq, otherwise
   returns the original input."
@@ -44,3 +38,26 @@
   which f returns true. Otherwise, returns nil."
   [f coll]
   (first (filter f coll)))
+
+;;;
+; Keywords and symbols utilities
+;;;
+(defn lower-keyword
+  "Takes a keyword as input and lowercase it, converting it back to keyword.
+  Input may also be a string.
+  Returns a keyword."
+  [k]
+  (->> k
+       (name)
+       (s/lower-case)
+       (keyword)))
+
+;;;
+; File utilities
+;;;
+(defn parse-props
+  "Takes a jproperties file as input and tries to parse its content into a map."
+  [file]
+  (let [props (java.util.Properties.)]
+    (.load props (clojure.java.io/reader file))
+    (into {} props)))
