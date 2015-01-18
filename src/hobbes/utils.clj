@@ -59,5 +59,7 @@
   "Takes a jproperties file as input and tries to parse its content into a map."
   [file]
   (let [props (java.util.Properties.)]
-    (.load props (clojure.java.io/reader file))
+    (try
+      (.load props (clojure.java.io/reader file))
+      (catch java.io.FileNotFoundException e))
     (into {} props)))
