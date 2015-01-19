@@ -1,9 +1,10 @@
 <ROOT>       ::= BLANKLINE* (TPARAGRAPH
-                                | PARAGRAPH
-                                | HEADER
-                                | ULIST
-                                | OLIST
-                                | RULE)*
+                             | PARAGRAPH
+                             | HEADER
+                             | QUOTE
+                             | ULIST
+                             | OLIST
+                             | RULE)*
 
 HEADER       ::= <LINEPRE> HEADERSYM <WHITESPACE> LINE <BLANKLINE>?
 <HEADERSYM>  ::= H1 | H2 | H3 | H4 | H5 | H6
@@ -14,6 +15,10 @@ H4           ::= <"_sss" HBASE   | "_" HBASE "4">
 H5           ::= <"_ssss" HBASE  | "_" HBASE "5">
 H6           ::= <"_sssss" HBASE | "_" HBASE "6">
 <HBASE>      ::= #"(?i)t(i(t(r(e)?)?)?)?"
+
+QUOTE        ::= <LINEPRE> <QUOTESYM> <WHITESPACE> CITE LINE <BLANKLINE>?
+CITE         ::= WORD
+<QUOTESYM>   ::= #"_(?i)c(i(t(a(t(i(o(n)?)?)?)?)?)?)?"
 
 ULIST        ::= ULISTLINE+ <BLANKLINE>+
 ULISTLINE    ::= <ULISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* <EOL>
@@ -31,7 +36,7 @@ TPARAGRAPH   ::= LINE
 
 <BLANKLINE>  ::= WHITESPACE* EOL
 <LINE>       ::= (<TAB> | LINEPRE WORD) (WHITESPACE WORD)* LINEPOST EOL
-<LINEPRE>    ::= (SPACE (SPACE (SPACE)? )? )?
+<LINEPRE>    ::= SPACE*
 <LINEPOST>   ::= SPACE?
 <WHITESPACE> ::= (SPACE | TAB)+
 <SPACE>      ::= ' '

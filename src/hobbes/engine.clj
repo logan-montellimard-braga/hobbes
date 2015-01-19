@@ -53,6 +53,11 @@
                                                   (parse-spans)
                                                   (flatten-if-seq))})]
     {:HEADER     (fn [{:keys [tag]} & c] (concat-c (lower-keyword tag) c))
+     :QUOTE      (fn [{:keys [content]} & c] {:tag :blockquote
+                                              :content (flatten (list
+                                                         c
+                                                         {:tag :cite
+                                                          :content content}))})
      :PARAGRAPH  (fn [& c] (concat-c :p c))
      :TPARAGRAPH (fn [& c] (concat-c :p c))
      :RULE       (fn [& _] {:tag :hr})
