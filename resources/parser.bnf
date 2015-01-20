@@ -17,13 +17,12 @@ H5           ::= <"_ssss" HBASE  | "_" HBASE "5">
 H6           ::= <"_sssss" HBASE | "_" HBASE "6">
 <HBASE>      ::= #"(?i)t(i(t(r(e)?)?)?)?"
 
-QUOTE        ::= <LINEPRE> <QUOTESYM> <WHITESPACE> CITE LINE <BLANKLINE>?
-CITE         ::= WORD
+QUOTE        ::= <LINEPRE> <QUOTESYM> <WHITESPACE> CITE <SEP> LINE <BLANKLINE>?
+CITE         ::= #"[^:]+"
 <QUOTESYM>   ::= #"_(?i)c(i(t(a(t(i(o(n)?)?)?)?)?)?)?"
 
-DEF          ::= <LINEPRE> <DEFSYM> <WHITESPACE> DEFTITLE <DEFSEP> LINE <BLANKLINE>?
+DEF          ::= <LINEPRE> <DEFSYM> <WHITESPACE> DEFTITLE <SEP> LINE <BLANKLINE>?
 DEFTITLE     ::= #"[^:]+"
-<DEFSEP>     ::= <WHITESPACE>? ':' <WHITESPACE>?
 <DEFSYM>     ::= #"_(?i)d(e(f(i(n(i(t(i(o(n)?)?)?)?)?)?)?)?)?"
 
 ULIST        ::= ULISTLINE+ <BLANKLINE>+
@@ -47,5 +46,6 @@ TPARAGRAPH   ::= LINE
 <WHITESPACE> ::= (SPACE | TAB)+
 <SPACE>      ::= ' '
 <TAB>        ::= <'\t'>
+<SEP>        ::= <WHITESPACE>? ':' <WHITESPACE>?
 <WORD>       ::= #'\S+'
 <EOL>        ::= <'\r'> | <'\n'> | <'\r\n'>
