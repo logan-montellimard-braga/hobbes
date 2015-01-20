@@ -2,6 +2,7 @@
                              | PARAGRAPH
                              | HEADER
                              | QUOTE
+                             | DEF
                              | ULIST
                              | OLIST
                              | RULE)*
@@ -19,6 +20,11 @@ H6           ::= <"_sssss" HBASE | "_" HBASE "6">
 QUOTE        ::= <LINEPRE> <QUOTESYM> <WHITESPACE> CITE LINE <BLANKLINE>?
 CITE         ::= WORD
 <QUOTESYM>   ::= #"_(?i)c(i(t(a(t(i(o(n)?)?)?)?)?)?)?"
+
+DEF          ::= <LINEPRE> <DEFSYM> <WHITESPACE> DEFTITLE <DEFSEP> LINE <BLANKLINE>?
+DEFTITLE     ::= #"[^:]+"
+<DEFSEP>     ::= <WHITESPACE>? ':' <WHITESPACE>?
+<DEFSYM>     ::= #"_(?i)d(e(f(i(n(i(t(i(o(n)?)?)?)?)?)?)?)?)?"
 
 ULIST        ::= ULISTLINE+ <BLANKLINE>+
 ULISTLINE    ::= <ULISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* <EOL>
