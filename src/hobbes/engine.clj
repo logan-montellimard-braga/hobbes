@@ -47,17 +47,25 @@
 (def ^:private block-transforms
   "Instaparse AST transformations to apply to blocks.
   Returns an AST of valid enlive blocks, with valid HTML5 tags."
-  (let [concat-c (fn [tag content] {:tag tag
-                                    :content (->> content
-                                                  (apply str)
-                                                  (parse-spans)
-                                                  (flatten-if-seq))})]
+  (let [concat-parse (fn [s] (->> s
+                                  (apply str)
+                                  (parse-spans)
+                                  (flatten-if-seq)))
+        concat-c (fn [tag content] {:tag tag :content (concat-parse content)})]
     {:HEADER     (fn [{:keys [tag]} & c] (concat-c (lower-keyword tag) c))
      :QUOTE      (fn [{:keys [content]} & c] {:tag :blockquote
-                                              :content (flatten (list
-                                                         c
-                                                         {:tag :cite
-                                                          :content content}))})
+                                              :content (flatten
+                                                         (list (concat-parse c)
+                                                               {:tag :cite
+                                                                :content (concat-parse content)}))})
+     :DEF        (fn [{:keys [content]} & c] {:tag :div
+                                              :attrs {:class "definition"}
+                                              :content {:tag :p
+                                                        :content (flatten
+                                                         (list {:tag :span
+                                                                :attrs {:class "deftitle"}
+                                                                :content (concat-parse content)}
+                                                               (concat-parse c)))}})
      :PARAGRAPH  (fn [& c] (concat-c :p c))
      :TPARAGRAPH (fn [& c] (concat-c :p c))
      :RULE       (fn [& _] {:tag :hr})
