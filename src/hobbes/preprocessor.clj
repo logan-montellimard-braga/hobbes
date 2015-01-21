@@ -23,6 +23,12 @@
       (s/replace comment-pattern "")
       (s/replace contained-comment-pattern "")))
 
+(defn- remove-whitespaces
+  "Takes a string as input and remove trailing and leading whitespaces on each
+  line, as well as consecutive whitespaces between words."
+  [input]
+  (s/replace (s/join "\n" (map s/trim (s/split-lines input))) #" {2,}" " "))
+
 ; Has own method for now cause implementation is really subject to change
 ; Soon to be deprecated, certainly
 (defn- add-padding-newlines
@@ -63,9 +69,7 @@
     (->> input
          (s/trim)
          (remove-comments)
-         (s/split-lines)
-         (map s/trim)
-         (s/join "\n")
+         (remove-whitespaces)
          (expand-abbrevs abbrs)
          (expand-runtime-variables vars)
          (add-padding-newlines))))
