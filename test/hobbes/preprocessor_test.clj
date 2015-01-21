@@ -55,5 +55,5 @@
 (deftest putting-it-all-together
   (testing "Preprocessing multiline input."
     (is (= "Trimmed,\nno comments,\nnew-padding.\n"
-           (preprocess "  \tTrimmed,!!comment\nno comments,\n~padding."
+           (preprocess "  \tTrimmed,!!comment\nno    comments,\n~padding."
                        {:padding :new-padding})))))
