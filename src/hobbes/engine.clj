@@ -23,12 +23,14 @@
   once parsed (use of functions instead of direct map to allow for closures
   from the parser)."
   (let [null-f (fn [& _] nil)]
-    [[:b    #"(.*)\*([^\*]+)\*(.*)" null-f]
+    [[:a    #"(.*)\s->(\S+)<-(.*)"  (fn [l]   {:href l :class "external"})]
+     [:a    #"(.*)\s->(\S+)(.*)"    (fn [l]   {:href (str l ".html") :class "internal"})]
+     [:b    #"(.*)\*([^\*]+)\*(.*)" null-f]
      [:i    #"(.*)/([^/]+)/(.*)"    null-f]
      [:u    #"(.*)_([^_]+)_(.*)"    null-f]
-     [:a    #"(.*)\s->(\S+)(.*)"    (fn [l] {:href (str l ".html")})]
      [:span #"(.*)--([^--]+)--(.*)" (fn [& _] {:class "striked"})]
      [:span #"(.*)#\?\?+()(.*)"     (fn [& _] {:class "missing"})]
+     [:span #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)" (fn [& _] {:class "example"})]
      [:code #"(.*)<([^>]+)>(.*)"    null-f]]))
 
 (defn- parse-spans
