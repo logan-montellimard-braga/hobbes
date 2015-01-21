@@ -13,6 +13,17 @@
     (is (= "Untouched."
            (#'hobbes.preprocessor/remove-comments "Untouched.")))))
 
+(deftest remove-whitespaces
+  (testing "No cleaning needed"
+    (is (= "foo"
+           (#'hobbes.preprocessor/remove-whitespaces "foo"))))
+  (testing "Removing trailing and leading whitespaces"
+    (is (= "foo"
+           (#'hobbes.preprocessor/remove-whitespaces "\t  \ffoo \t"))))
+  (testing "Removing consecutive spaces between words"
+    (is (= "foo bar"
+           (#'hobbes.preprocessor/remove-whitespaces "foo   bar")))))
+
 (deftest add-padding-newlines
   (testing "Input has no padding newlines."
     (is (= "Not yet\n"
