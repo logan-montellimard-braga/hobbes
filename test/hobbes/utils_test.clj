@@ -38,6 +38,14 @@
     (is (= :foo
            (lower-keyword :FoO)))))
 
+(deftest get-domain-name-test
+  (testing "Input is not a valid url"
+    (is (= "Foo"
+           (get-domain-name "foo"))))
+  (testing "Input is a valid url"
+    (is (= "google.com"
+           (get-domain-name "http://www.google.com?q=query")))))
+
 (deftest flatten-if-seq-test
   (testing "Input is a seq"
     (is (= '("foo" "bar")

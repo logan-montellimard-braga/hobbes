@@ -40,7 +40,7 @@
   (first (filter f coll)))
 
 ;;;
-; Keywords and symbols utilities
+; Keywords, symbols and strings utilities
 ;;;
 (defn lower-keyword
   "Takes a keyword as input and lowercase it, converting it back to keyword.
@@ -51,6 +51,17 @@
        (name)
        (s/lower-case)
        (keyword)))
+
+(defn get-domain-name
+  "Takes a string as input and tries to parse it as a URL. If it succeeds,
+  returns the domain name minus 'www.' if it was present. If it fails, returns
+  the capitalized, original input."
+  [url]
+  (if-let [host (.getHost (java.net.URI. url))]
+    (if (.startsWith host "www.")
+      (subs host 4)
+      host)
+    (s/capitalize url)))
 
 ;;;
 ; File utilities
