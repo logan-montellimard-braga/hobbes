@@ -45,7 +45,7 @@
       (list (parse-spans before)
             {:tag tag
              :content (case tag
-                        :a    c
+                        :a    (get-domain-name c)
                         :img  nil
                         :code c
                         (parse-spans c))

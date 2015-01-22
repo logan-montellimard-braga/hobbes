@@ -36,7 +36,7 @@
     (is (= '("" {:tag :b, :content ("bold" {:tag :u, :content "underline", :attrs nil} ""), :attrs nil} "")
            (#'hobbes.engine/parse-spans "*bold_underline_*"))))
   (testing "Special case: link span"
-    (is (= '("here a" {:tag :a, :content "link", :attrs {:href "link.html"
+    (is (= '("here a" {:tag :a, :content "Link", :attrs {:href "link.html"
                                                          :class "internal"}} "")
            (#'hobbes.engine/parse-spans "here a ->link")))))
 
