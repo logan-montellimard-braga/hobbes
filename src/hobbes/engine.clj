@@ -28,6 +28,7 @@
      [:b    #"(.*)\*([^\*]+)\*(.*)" null-f]
      [:i    #"(.*)/([^/]+)/(.*)"    null-f]
      [:u    #"(.*)_([^_]+)_(.*)"    null-f]
+     [:img  #"(.*)\s(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)" (fn [i] {:src i :alt i})]
      [:span #"(.*)--([^--]+)--(.*)" (fn [& _] {:class "striked"})]
      [:span #"(.*)#\?\?+()(.*)"     (fn [& _] {:class "missing"})]
      [:span #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)" (fn [& _] {:class "example"})]
@@ -42,7 +43,13 @@
                                          (conj match tag attrs))))]
     (let [[_ before c after tag attrs] span]
       (list (parse-spans before)
-            {:tag tag :content (parse-spans c) :attrs (attrs c)}
+            {:tag tag
+             :content (case tag
+                        :a    c
+                        :img  nil
+                        :code nil
+                        (parse-spans c))
+             :attrs (attrs c)}
             (parse-spans after)))
     input))
 
