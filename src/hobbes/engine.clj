@@ -47,7 +47,7 @@
              :content (case tag
                         :a    c
                         :img  nil
-                        :code nil
+                        :code c
                         (parse-spans c))
              :attrs (attrs c)}
             (parse-spans after)))
