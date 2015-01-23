@@ -57,11 +57,14 @@
   returns the domain name minus 'www.' if it was present. If it fails, returns
   the capitalized, original input."
   [url]
-  (if-let [host (.getHost (java.net.URI. url))]
-    (if (.startsWith host "www.")
-      (subs host 4)
-      host)
-    (s/capitalize url)))
+  (try
+    (if-let [host (.getHost (java.net.URI. url))]
+      (if (.startsWith host "www.")
+        (subs host 4)
+        host)
+      (s/capitalize url))
+    (catch Exception e
+      url)))
 
 ;;;
 ; File utilities
