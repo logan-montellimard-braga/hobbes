@@ -1,13 +1,13 @@
-<ROOT>       ::= BLANKLINE* (TPARAGRAPH
-                             | PARAGRAPH
-                             | HEADER
-                             | QUOTE
-                             | DEF
-                             | ULIST
-                             | OLIST
-                             | RULE)*
+<ROOT>       ::= (TPARAGRAPH
+                  | PARAGRAPH
+                  | HEADER
+                  | QUOTE
+                  | DEF
+                  | ULIST
+                  | OLIST
+                  | RULE)*
 
-HEADER       ::= <LINEPRE> HEADERSYM <WHITESPACE> LINE <BLANKLINE>?
+HEADER       ::= HEADERSYM <WHITESPACE> LINE <BLANKLINE>?
 <HEADERSYM>  ::= H1 | H2 | H3 | H4 | H5 | H6
 H1           ::= <"_" HBASE "1"?>
 H2           ::= <"_s" HBASE     | "_" HBASE "2">
@@ -17,11 +17,11 @@ H5           ::= <"_ssss" HBASE  | "_" HBASE "5">
 H6           ::= <"_sssss" HBASE | "_" HBASE "6">
 <HBASE>      ::= #"(?i)t(i(t(r(e)?)?)?)?"
 
-QUOTE        ::= <LINEPRE> <QUOTESYM> <WHITESPACE> CITE <SEP> LINE <BLANKLINE>?
+QUOTE        ::= <QUOTESYM> <WHITESPACE> CITE <SEP> LINE <BLANKLINE>?
 CITE         ::= #"[^:]+"
 <QUOTESYM>   ::= #"_(?i)c(i(t(a(t(i(o(n)?)?)?)?)?)?)?"
 
-DEF          ::= <LINEPRE> <DEFSYM> <WHITESPACE> DEFTITLE <SEP> LINE <BLANKLINE>?
+DEF          ::= <DEFSYM> <WHITESPACE> DEFTITLE <SEP> LINE <BLANKLINE>?
 DEFTITLE     ::= #"[^:]+"
 <DEFSYM>     ::= #"_(?i)d(e(f(i(n(i(t(i(o(n)?)?)?)?)?)?)?)?)?"
 
@@ -33,16 +33,14 @@ OLIST        ::= OLISTLINE+ BLANKLINE+
 OLISTLINE    ::= <OLISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* EOL
 <OLISTSYM>   ::= <#'[0-9]+\.'>
 
-RULE         ::= <LINEPRE> <RULESYM> <RULESYM> <RULESYM> <RULESYM>* <BLANKLINE>+
+RULE         ::= <RULESYM> <RULESYM> <RULESYM> <RULESYM>* <BLANKLINE>+
 <RULESYM>    ::= '+'| '*' | '-' | ':' | '%' | '$' | '&' | '~' | '#' | "'"
 
 PARAGRAPH    ::= LINE+ BLANKLINE+
 TPARAGRAPH   ::= LINE
 
 <BLANKLINE>  ::= WHITESPACE* EOL
-<LINE>       ::= (<TAB> | LINEPRE WORD) (WHITESPACE WORD)* LINEPOST EOL
-<LINEPRE>    ::= SPACE*
-<LINEPOST>   ::= SPACE?
+<LINE>       ::= (<TAB> | WORD) (WHITESPACE WORD)* EOL
 <WHITESPACE> ::= (SPACE | TAB)+
 <SPACE>      ::= ' '
 <TAB>        ::= <'\t'>
