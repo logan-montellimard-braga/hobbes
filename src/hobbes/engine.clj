@@ -23,12 +23,12 @@
   once parsed (use of functions instead of direct map to allow for closures
   from the parser)."
   (let [null-f (fn [& _] nil)]
-    [[:a    #"(.*)\s->(\S+)<-(.*)"  (fn [l]   {:href l :class "external"})]
-     [:a    #"(.*)\s->(\S+)(.*)"    (fn [l]   {:href (str l ".html") :class "internal"})]
+    [[:a    #"(?i)(?:(^|.*\s))(https?://\S+)(.*)" (fn [l]   {:href l :class "external"})]
+     [:a    #"(?:(^|.*\s))->([^\s\.]+)(.*)" (fn [l]   {:href (str l ".html") :class "internal"})]
      [:b    #"(.*)\*([^\*]+)\*(.*)" null-f]
      [:i    #"(.*)/([^/]+)/(.*)"    null-f]
      [:u    #"(.*)_([^_]+)_(.*)"    null-f]
-     [:img  #"(.*)\s(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)" (fn [i] {:src i :alt i})]
+     [:img  #"(?:(^|.*\s))(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)" (fn [i] {:src i :alt i})]
      [:span #"(.*)--([^--]+)--(.*)" (fn [& _] {:class "striked"})]
      [:span #"(.*)#\?\?+()(.*)"     (fn [& _] {:class "missing"})]
      [:span #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)" (fn [& _] {:class "example"})]
