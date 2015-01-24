@@ -5,6 +5,7 @@
                   | DEF
                   | ULIST
                   | OLIST
+                  | CODE
                   | RULE)*
 
 HEADER       ::= HEADERSYM <WHITESPACE> LINE <BLANKLINE>?
@@ -24,6 +25,10 @@ CITE         ::= #"[^:]+"
 DEF          ::= <DEFSYM> <WHITESPACE> DEFTITLE <SEP> LINE <BLANKLINE>?
 DEFTITLE     ::= #"[^:]+"
 <DEFSYM>     ::= #"_(?i)d(e(f(i(n(i(t(i(o(n)?)?)?)?)?)?)?)?)?"
+
+CODE         ::= <CODESYM> <WHITESPACE>? <EOL> CODELINE+ <BLANKLINE>+
+<CODESYM>    ::= #"_(?i)c(o(d(e)?)?)?"
+CODELINE     ::= WORD (WHITESPACE WORD)* <EOL>
 
 ULIST        ::= ULISTLINE+ <BLANKLINE>+
 ULISTLINE    ::= <ULISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* <EOL>

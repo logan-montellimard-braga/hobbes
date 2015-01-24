@@ -75,6 +75,9 @@
                                                                 :attrs {:class "deftitle"}
                                                                 :content (concat-parse content)}
                                                                (concat-parse c)))}})
+     :CODE       (fn [& c] {:tag :pre :content {:tag :code
+                                                :content (interpose "\n" c)}})
+     :CODELINE   (fn [& c] (apply str c))
      :PARAGRAPH  (fn [& c] (concat-c :p c))
      :TPARAGRAPH (fn [& c] (concat-c :p c))
      :RULE       (fn [& _] {:tag :hr})
