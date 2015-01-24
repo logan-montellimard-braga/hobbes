@@ -7,6 +7,7 @@
                   | OLIST
                   | CODE
                   | IMG
+                  | VIDEO
                   | RULE)*
 
 HEADER       ::= HEADERSYM <WHITESPACE> LINE <BLANKLINE>?
@@ -33,6 +34,9 @@ CODELINE     ::= WORD (WHITESPACE WORD)* <EOL>
 
 IMG          ::= <IMGSYM> <WHITESPACE> LINE <BLANKLINE>?
 <IMGSYM>     ::= #"(?i)_img" | #"_(?i)i(m(a(g(e)?)?)?)?"
+
+VIDEO        ::= <VIDEOSYM> <WHITESPACE> LINE <BLANKLINE>?
+<VIDEOSYM>   ::= #"(?i)_v(i(d(e(o)?)?)?)?"
 
 ULIST        ::= ULISTLINE+ <BLANKLINE>+
 ULISTLINE    ::= <ULISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* <EOL>
