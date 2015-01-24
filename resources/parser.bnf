@@ -6,6 +6,7 @@
                   | ULIST
                   | OLIST
                   | CODE
+                  | IMG
                   | RULE)*
 
 HEADER       ::= HEADERSYM <WHITESPACE> LINE <BLANKLINE>?
@@ -29,6 +30,9 @@ DEFTITLE     ::= #"[^:]+"
 CODE         ::= <CODESYM> <WHITESPACE>? <EOL> CODELINE+ <BLANKLINE>+
 <CODESYM>    ::= #"_(?i)c(o(d(e)?)?)?"
 CODELINE     ::= WORD (WHITESPACE WORD)* <EOL>
+
+IMG          ::= <IMGSYM> <WHITESPACE> LINE <BLANKLINE>?
+<IMGSYM>     ::= #"(?i)_img" | #"_(?i)i(m(a(g(e)?)?)?)?"
 
 ULIST        ::= ULISTLINE+ <BLANKLINE>+
 ULISTLINE    ::= <ULISTSYM> <WHITESPACE>+ WORD (WHITESPACE WORD)* <EOL>

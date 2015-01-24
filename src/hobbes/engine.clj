@@ -79,6 +79,8 @@
                                                (concat-parse c)))}})
      :CODE       (fn [& c] {:tag :pre :content {:tag :code
                                                 :content (interpose "\n" c)}})
+     :IMG        (fn [& c] {:tag :img :attrs {:src (apply str c)
+                                              :alt (apply str c)}})
      :CODELINE   (fn [& c] (apply str c))
      :PARAGRAPH  (fn [& c] (concat-c :p c))
      :TPARAGRAPH (fn [& c] (concat-c :p c))
