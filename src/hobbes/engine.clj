@@ -62,19 +62,21 @@
                                   (flatten-if-seq)))
         concat-c (fn [tag content] {:tag tag :content (concat-parse content)})]
     {:HEADER     (fn [{:keys [tag]} & c] (concat-c (lower-keyword tag) c))
-     :QUOTE      (fn [{:keys [content]} & c] {:tag :blockquote
-                                              :content (flatten
-                                                         (list (concat-parse c)
-                                                               {:tag :cite
-                                                                :content (concat-parse content)}))})
-     :DEF        (fn [{:keys [content]} & c] {:tag :div
-                                              :attrs {:class "definition"}
-                                              :content {:tag :p
-                                                        :content (flatten
-                                                         (list {:tag :span
-                                                                :attrs {:class "deftitle"}
-                                                                :content (concat-parse content)}
-                                                               (concat-parse c)))}})
+     :QUOTE      (fn [{:keys [content]} & c]
+                   {:tag :blockquote
+                    :content (flatten
+                               (list (concat-parse c)
+                                     {:tag :cite
+                                      :content (concat-parse content)}))})
+     :DEF        (fn [{:keys [content]} & c]
+                   {:tag :div
+                    :attrs {:class "definition"}
+                    :content {:tag :p
+                              :content (flatten
+                                         (list {:tag :span
+                                                :attrs {:class "deftitle"}
+                                                :content (concat-parse content)}
+                                               (concat-parse c)))}})
      :CODE       (fn [& c] {:tag :pre :content {:tag :code
                                                 :content (interpose "\n" c)}})
      :CODELINE   (fn [& c] (apply str c))
