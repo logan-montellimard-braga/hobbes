@@ -56,11 +56,8 @@
 (def ^:private block-transforms
   "Instaparse AST transformations to apply to blocks.
   Returns an AST of valid enlive blocks, with valid HTML5 tags."
-  (let [concat-parse (fn [s] (->> s
-                                  (apply str)
-                                  (parse-spans)
-                                  (flatten-if-seq)))
-        concat-c (fn [tag content] {:tag tag :content (concat-parse content)})]
+  (let [concat-parse (fn [s] (flatten-if-seq (parse-spans (apply str s))))
+        concat-c     (fn [t c] {:tag t :content (concat-parse c)})]
     {:HEADER     (fn [{:keys [tag]} & c] (concat-c (lower-keyword tag) c))
      :QUOTE      (fn [{:keys [content]} & c]
                    {:tag :blockquote
