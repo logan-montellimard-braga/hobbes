@@ -58,7 +58,9 @@
   Returns an AST of valid enlive blocks, with valid HTML5 tags."
   (let [concat-parse (fn [s] (flatten-if-seq (parse-spans (apply str s))))
         concat-c     (fn [t c] {:tag t :content (concat-parse c)})]
-    {:HEADER     (fn [{:keys [tag]} & c] (concat-c (lower-keyword tag) c))
+    {:HEADER     (fn [{:keys [tag]} & c] {:tag (lower-keyword tag)
+                                          :content (concat-parse c)
+                                          :attrs {:id (dasherize (apply str c))}})
      :QUOTE      (fn [{:keys [content]} & c]
                    {:tag :blockquote
                     :content (flatten
