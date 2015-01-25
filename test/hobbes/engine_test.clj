@@ -45,6 +45,6 @@
     (is (= '()
            (parse ""))))
   (testing "Real input"
-    (is (= '({:tag :h1, :content "My title"}
+    (is (= '({:tag :h1, :content "My title", :attrs {:id "my_title"}}
              {:tag :p, :content ("my paragraph in " {:tag :b, :content "bold", :attrs nil} "")})
            (parse "_Ti My title\nmy paragraph in *bold*\n\n")))))
