@@ -21,11 +21,11 @@ H5           ::= <"_ssss" HBASE  | "_" HBASE "5">
 H6           ::= <"_sssss" HBASE | "_" HBASE "6">
 <HBASE>      ::= #"(?i)t(i(t(r(e)?)?)?)?"
 
-QUOTE        ::= <QUOTESYM> <WHITESPACE> CITE <SEP> LINE <BLANKLINE>?
+QUOTE        ::= <QUOTESYM> <WHITESPACE> CITE <SEP> LINE+ <BLANKLINE>+
 CITE         ::= #"[^:]+"
 <QUOTESYM>   ::= #"_(?i)c(i(t(a(t(i(o(n)?)?)?)?)?)?)?"
 
-DEF          ::= <DEFSYM> <WHITESPACE> DEFTITLE <SEP> LINE <BLANKLINE>?
+DEF          ::= <DEFSYM> <WHITESPACE> DEFTITLE <SEP> LINE+ <BLANKLINE>+
 DEFTITLE     ::= #"[^:]+"
 <DEFSYM>     ::= #"_(?i)d(e(f(i(n(i(t(i(o(n)?)?)?)?)?)?)?)?)?"
 
@@ -33,7 +33,7 @@ CODE         ::= <CODESYM> <WHITESPACE>? <EOL> CODELINE+ <BLANKLINE>+
 <CODESYM>    ::= #"_(?i)c(o(d(e)?)?)?"
 CODELINE     ::= WORD (WHITESPACE WORD)* <EOL>
 
-EX           ::= <EXSYM> <WHITESPACE> LINE <BLANKLINE>?
+EX           ::= <EXSYM> <WHITESPACE> LINE+ <BLANKLINE>+
 <EXSYM>      ::= #"(?i)_e(x(e(m(p(l(e)?)?)?)?)?)?"
 
 IMG          ::= <IMGSYM> <WHITESPACE> LINE <BLANKLINE>?
