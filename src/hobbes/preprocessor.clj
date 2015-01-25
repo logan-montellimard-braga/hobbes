@@ -81,8 +81,8 @@
   "Preprocess string input, making it suitable to parse.
   Returns the treated input as a string."
   [input & [abbr-map variables-map]]
-  (let [abbrs (or abbr-map      default-abbrevs)
-        vars  (or variables-map default-variables)]
+  (let [abbrs (merge default-abbrevs abbr-map)
+        vars  (merge default-variables variables-map)]
     (->> input
          (s/trim)
          (remove-comments)
