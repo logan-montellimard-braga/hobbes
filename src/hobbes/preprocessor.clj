@@ -58,26 +58,35 @@
   "Runtime variables start with a =."
   (partial expand-map-in-str "="))
 
-(defn- correct-punctuation-mistakes
-  "Takes a map containing punctuation rules to fix and a string, and applies
-  them to it."
-  [m string]
-  (map-replace m string))
+(def ^:private default-abbrevs
+  "Default map of abbreviations."
+  (try
+    (let [lang (System/getProperty "user.language")]
+      (parse-props (clojure.java.io/resource
+                     (str "default/abbreviations_" lang ".properties"))))
+    (catch Exception e
+      {})))
+
+(def ^:private default-variables
+  "Default map of runtime variables."
+  (try
+    (let [lang (System/getProperty "user.language")]
+      (into {} (eval-map-resource (str "default/variables_" lang ".edn"))))
+    (catch Exception e
+      {})))
 
 
 ; Public API
 (defn preprocess
   "Preprocess string input, making it suitable to parse.
   Returns the treated input as a string."
-  [input & [abbr-map variables-map punctuation-map]]
-  (let [abbrs (or abbr-map {})
-        vars  (or variables-map {})
-        punct (or punctuation-map {})]
+  [input & [abbr-map variables-map]]
+  (let [abbrs (or abbr-map      default-abbrevs)
+        vars  (or variables-map default-variables)]
     (->> input
          (s/trim)
          (remove-comments)
          (remove-whitespaces)
-         (correct-punctuation-mistakes punct)
          (expand-abbrevs abbrs)
          (expand-runtime-variables vars)
          (add-padding-newlines))))
