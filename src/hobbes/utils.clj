@@ -1,6 +1,7 @@
 (ns hobbes.utils
   "Utility functions."
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [clojure.java.io :as io]))
 
 (defn name-or-re
   "If input is a regex, returns it. Otherwise, returns (name input)."
@@ -84,6 +85,11 @@
   [file]
   (let [props (java.util.Properties.)]
     (try
-      (.load props (clojure.java.io/reader file))
+      (.load props (io/reader file))
       (catch java.io.FileNotFoundException e))
     (into {} props)))
+
+(defn eval-map-resource
+  "Evals the content of given resource file, and returns it."
+  [file]
+  (read-string (slurp (io/resource file))))
