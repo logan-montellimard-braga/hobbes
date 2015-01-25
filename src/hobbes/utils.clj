@@ -6,8 +6,10 @@
 (defn name-or-re
   "If input is a regex, returns it. Otherwise, returns (name input)."
   [input]
-  (if (= java.util.regex.Pattern (class input)) input
-    (name input)))
+  (cond
+    (= java.util.regex.Pattern (class input)) input
+    (= clojure.lang.PersistentList (class input)) (eval input)
+    :else (name input)))
 
 (defn map-replace
   "Takes a map of {k v} and a string and replaces every occurence of k with v
