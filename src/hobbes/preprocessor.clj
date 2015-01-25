@@ -58,18 +58,26 @@
   "Runtime variables start with a =."
   (partial expand-map-in-str "="))
 
+(defn- correct-punctuation-mistakes
+  "Takes a map containing punctuation rules to fix and a string, and applies
+  them to it."
+  [m string]
+  (map-replace m string))
+
 
 ; Public API
 (defn preprocess
   "Preprocess string input, making it suitable to parse.
   Returns the treated input as a string."
-  [input & [abbr-map variables-map]]
+  [input & [abbr-map variables-map punctuation-map]]
   (let [abbrs (or abbr-map {})
-        vars  (or variables-map {})]
+        vars  (or variables-map {})
+        punct (or punctuation-map {})]
     (->> input
          (s/trim)
          (remove-comments)
          (remove-whitespaces)
+         (correct-punctuation-mistakes punct)
          (expand-abbrevs abbrs)
          (expand-runtime-variables vars)
          (add-padding-newlines))))
