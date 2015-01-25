@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [hobbes.preprocessor :refer :all]))
 
-(deftest remove-comments
+(deftest remove-comments-test
   (testing "Cleaning comments from string input"
     (is (= ""
            (#'hobbes.preprocessor/remove-comments "!! Commented !"))))
@@ -13,7 +13,7 @@
     (is (= "Untouched."
            (#'hobbes.preprocessor/remove-comments "Untouched.")))))
 
-(deftest remove-whitespaces
+(deftest remove-whitespaces-test
   (testing "No cleaning needed"
     (is (= "foo"
            (#'hobbes.preprocessor/remove-whitespaces "foo"))))
@@ -24,12 +24,12 @@
     (is (= "foo bar"
            (#'hobbes.preprocessor/remove-whitespaces "foo   bar")))))
 
-(deftest add-padding-newlines
+(deftest add-padding-newlines-test
   (testing "Input has no padding newlines."
     (is (= "Not yet\n"
            (#'hobbes.preprocessor/add-padding-newlines "Not yet")))))
 
-(deftest expand-abbrevs ; same for expand-runtime-variables
+(deftest expand-abbrevs-test ; same for expand-runtime-variables
   (testing "Input has no abbreviation pattern and no abbr map."
     (is (= "Nothing changed."
            (#'hobbes.preprocessor/expand-abbrevs {} "Nothing changed."))))
@@ -52,7 +52,7 @@
                                                  "~Nothing ~changed.")))))
 
 
-(deftest putting-it-all-together
+(deftest preprocess-test
   (testing "Preprocessing multiline input."
     (is (= "Trimmed,\nno comments,\nnew-padding.\n"
            (preprocess "  \tTrimmed,!!comment\nno    comments,\n~padding."
