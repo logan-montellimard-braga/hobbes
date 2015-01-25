@@ -1,5 +1,5 @@
 (ns hobbes.engine
-  "Engine used to parse .hob input and return a parse tree for 
+  "Engine used to parse .hob input and return a parse tree for
   further processing."
   (:require [instaparse.core :as insta]
             [hobbes.utils :refer :all]))
