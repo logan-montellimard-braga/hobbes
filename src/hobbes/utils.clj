@@ -2,17 +2,21 @@
   "Utility functions."
   (:require [clojure.string :as s]))
 
-;;;
-; Seqs utilities
-;;;
+(defn name-or-re
+  "If input is a regex, returns it. Otherwise, returns (name input)."
+  [input]
+  (if (= java.util.regex.Pattern (class input)) input
+    (name input)))
+
 (defn map-replace
   "Takes a map of {k v} and a string and replaces every occurence of k with v
-  in the string, for each k, v in the map. k and v may be keywords or strings.
+  in the string, for each k, v in the map. k and v may be keywords, strings,
+  or regexs.
   Returns the treated string."
   ([string] string)
   ([m string]
    (reduce
-     (fn [acc [k v]] (s/replace acc (name k) (name v)))
+     (fn [acc [k v]] (s/replace acc (name-or-re k) (name-or-re v)))
      string m)))
 
 (defn add-prefix-to-map-keys
