@@ -46,6 +46,14 @@
     (is (= "google.com"
            (get-domain-name "http://www.google.com?q=query")))))
 
+(deftest dasherize-test
+  (testing "Input doesnt need to change"
+    (is (= "foo"
+           (dasherize "foo"))))
+  (testing "Input should be dasherized"
+    (is (= "foo_bar_baz"
+           (dasherize "Foo Bar baz")))))
+
 (deftest flatten-if-seq-test
   (testing "Input is a seq"
     (is (= '("foo" "bar")

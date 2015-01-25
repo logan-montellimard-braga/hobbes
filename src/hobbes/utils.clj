@@ -66,6 +66,12 @@
     (catch Exception e
       url)))
 
+(defn dasherize
+  "Takes a string as input and lowercases it, converting all spaces to dashes.
+  Returns a string."
+  [s]
+  (s/lower-case (s/replace s #"\s" "_")))
+
 ;;;
 ; File utilities
 ;;;
