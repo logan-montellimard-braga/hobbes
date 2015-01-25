@@ -6,6 +6,7 @@
                   | ULIST
                   | OLIST
                   | CODE
+                  | EX
                   | IMG
                   | VIDEO
                   | RULE)*
@@ -31,6 +32,9 @@ DEFTITLE     ::= #"[^:]+"
 CODE         ::= <CODESYM> <WHITESPACE>? <EOL> CODELINE+ <BLANKLINE>+
 <CODESYM>    ::= #"_(?i)c(o(d(e)?)?)?"
 CODELINE     ::= WORD (WHITESPACE WORD)* <EOL>
+
+EX           ::= <EXSYM> <WHITESPACE> LINE <BLANKLINE>?
+<EXSYM>      ::= #"(?i)_e(x(e(m(p(l(e)?)?)?)?)?)?"
 
 IMG          ::= <IMGSYM> <WHITESPACE> LINE <BLANKLINE>?
 <IMGSYM>     ::= #"(?i)_img" | #"_(?i)i(m(a(g(e)?)?)?)?"

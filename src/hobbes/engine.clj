@@ -77,6 +77,9 @@
      :CODE       (fn [& c] {:tag :pre :content {:tag :code
                                                 :content (interpose "\n" c)}})
      :CODELINE   (fn [& c] (apply str c))
+     :EX         (fn [& c] {:tag :div
+                            :content (concat-c :p c)
+                            :attrs {:class "example"}})
      :IMG        (fn [& c] {:tag :img :attrs {:src (apply str c)
                                               :alt (apply str c)}})
      :VIDEO      (fn [& c] {:tag :video :content {:tag :source
