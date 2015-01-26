@@ -46,14 +46,14 @@
            (#'hobbes.preprocessor/expand-abbrevs {:Nothing :Something}
                                                  "~Nothing changed."))))
   (testing "Input has abbreviation pattern and abbr map with several keys."
-    (is (= "Something happened."
+    (is (= "Something happened "
            (#'hobbes.preprocessor/expand-abbrevs {:Nothing :Something
                                                   :changed :happened}
-                                                 "~Nothing ~changed.")))))
+                                                 "~Nothing ~changed ")))))
 
 
 (deftest preprocess-test
   (testing "Preprocessing multiline input."
-    (is (= "Trimmed,\nno comments,\nnew-padding.\n"
-           (preprocess "  \tTrimmed,!!comment\nno    comments,\n~padding."
+    (is (= "Trimmed,\nno comments,\nnew-padding .\n"
+           (preprocess "  \tTrimmed,!!comment\nno    comments,\n~padding ."
                        {:padding :new-padding})))))
