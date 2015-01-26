@@ -9,7 +9,7 @@
   (cond
     (= java.util.regex.Pattern (class input)) input
     (= clojure.lang.PersistentList (class input)) (eval input)
-    :else (name input)))
+    :else (str (name input) " ")))
 
 (defn map-replace
   "Takes a map of {k v} and a string and replaces every occurence of k with v
