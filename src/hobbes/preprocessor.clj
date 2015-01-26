@@ -13,7 +13,7 @@
   "Regex to match contained comment, be it mono or multiline.
   Everything between !* and *! is treated as a comment,
   eg. 'Not commented !* commented *!.'"
-  #"(!\*.+\*!)")
+  #"(?s)(!\*.+\*!)")
 
 (defn- remove-comments
   "Remove comment blocs from input (contained and rest-of-line) string.
