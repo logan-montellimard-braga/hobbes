@@ -23,15 +23,20 @@
   once parsed (use of functions instead of direct map to allow for closures
   from the parser)."
   (let [null-f (fn [& _] nil)]
-    [[:a    #"(?i)(?:(^|.*\s))(https?://\S+)(.*)" (fn [l]   {:href l :class "external"})]
-     [:a    #"(?:(^|.*\s))->([^\s\.]+)(.*)" (fn [l]   {:href (str l ".html") :class "internal"})]
+    [[:a    #"(?i)(?:(^|.*\s))(https?://\S+)(.*)"
+      (fn [l]   {:href l :class "external"})]
+     [:a    #"(?:(^|.*\s))->([^\s\.]+)(.*)"
+      (fn [l]   {:href (str l ".html") :class "internal"})]
      [:b    #"(.*)\*([^\*]+)\*(.*)" null-f]
      [:i    #"(.*)/([^/]+)/(.*)"    null-f]
      [:u    #"(.*)_([^_]+)_(.*)"    null-f]
      [:del  #"(.*)--([^--]+)--(.*)" null-f]
-     [:img  #"(?:(^|.*\s))(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)" (fn [i] {:src i :alt i})]
-     [:span #"(.*)#\?\?+()(.*)"     (fn [& _] {:class "missing"})]
-     [:span #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)" (fn [& _] {:class "example"})]
+     [:img  #"(?:(^|.*\s))(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)"
+      (fn [i] {:src i :alt i})]
+     [:span #"(.*)#\?\?+()(.*)"
+      (fn [& _] {:class "missing"})]
+     [:span #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)"
+      (fn [& _] {:class "example"})]
      [:code #"(.*)<([^>]+)>(.*)"    null-f]]))
 
 (defn- parse-spans
@@ -56,38 +61,37 @@
 (def ^:private block-transforms
   "Instaparse AST transformations to apply to blocks.
   Returns an AST of valid enlive blocks, with valid HTML5 tags."
-  (let [concat-parse (fn [s] (flatten-if-seq (parse-spans (apply str s))))
+  (let [trim-str     (fn [s] (clojure.string/trim (apply str s)))
+        concat-parse (fn [s] (flatten-if-seq (parse-spans (trim-str s))))
         concat-c     (fn [t c] {:tag t :content (concat-parse c)})]
     {:HEADER     (fn [{:keys [tag]} & c] {:tag (lower-keyword tag)
                                           :content (concat-parse c)
-                                          :attrs {:id (dasherize (apply str c))}})
+                                          :attrs {:id (dasherize (trim-str c))}})
      :QUOTE      (fn [{:keys [content]} & c]
                    {:tag :blockquote
-                    :content (flatten
-                               (list (concat-parse c)
-                                     {:tag :cite
-                                      :content (concat-parse content)}))})
+                    :content (flatten (list (concat-parse c)
+                                            {:tag :cite
+                                             :content (concat-parse content)}))})
      :DEF        (fn [{:keys [content]} & c]
-                   {:tag :div
-                    :attrs {:class "definition"}
+                   {:tag :div :attrs {:class "definition"}
                     :content {:tag :p
                               :content (flatten
                                          (list {:tag :span
                                                 :attrs {:class "deftitle"}
                                                 :content (concat-parse content)}
                                                (concat-parse c)))}})
-     :CODE       (fn [& c] {:tag :pre :content {:tag :code
-                                                :content (interpose "\n" c)}})
+     :CODE       (fn [& c] {:tag :pre
+                            :content {:tag :code :content (interpose "\n" c)}})
      :CODELINE   (fn [& c] (apply str c))
-     :EX         (fn [& c] {:tag :div
-                            :content (concat-c :p c)
+     :EX         (fn [& c] {:tag :div :content (concat-c :p c)
                             :attrs {:class "example"}})
-     :IMG        (fn [& c] {:tag :img :attrs {:src (apply str c)
-                                              :alt (apply str c)}})
-     :VIDEO      (fn [& c] {:tag :video :content {:tag :source
-                                                  :attrs {:src (apply str c)}}})
+     :IMG        (fn [& c] {:tag :img
+                            :attrs {:src (trim-str c) :alt (trim-str c)}})
+     :VIDEO      (fn [& c] {:tag :video
+                            :content {:tag :source :attrs {:src (trim-str c)}}})
      :PARAGRAPH  (fn [& c] (concat-c :p c))
      :TPARAGRAPH (fn [& c] (concat-c :p c))
+     :EOL        (fn []    " ")
      :RULE       (fn [& _] {:tag :hr})
      :ULIST      (fn [& c] {:tag :ul :content c})
      :OLIST      (fn [& c] {:tag :ol :content c})
