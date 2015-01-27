@@ -63,4 +63,4 @@ TPARAGRAPH   ::= LINE
 <TAB>        ::= <'\t'>
 <SEP>        ::= <WHITESPACE>? ':' <WHITESPACE>?
 <WORD>       ::= #'\S+'
-<EOL>        ::= <'\r'> | <'\n'> | <'\r\n'>
+EOL          ::= <'\r'> | <'\n'> | <'\r\n'>
