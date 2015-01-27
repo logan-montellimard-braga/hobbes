@@ -12,10 +12,10 @@
     (binding [*out* nil]
       (is (thrown? java.lang.Exception (#'hobbes.engine/parse-blocks "a")))))
   (testing "Correct, simple input"
-    (is (= '({:tag :HEADER, :content ({:tag :H1, :content nil} "foo")})
+    (is (= '({:tag :HEADER, :content ({:tag :H1, :content nil} "foo" {:tag :EOL, :content nil})})
            (#'hobbes.engine/parse-blocks "_t foo\n"))))
   (testing "Flexibility of special tokens"
-    (is (= '({:tag :HEADER, :content ({:tag :H2, :content nil} "foo")})
+    (is (= '({:tag :HEADER, :content ({:tag :H2, :content nil} "foo" {:tag :EOL, :content nil})})
            (#'hobbes.engine/parse-blocks "_stit foo\n")))))
 
 (deftest parse-spans-test
