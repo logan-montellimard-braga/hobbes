@@ -23,21 +23,23 @@
   once parsed (use of functions instead of direct map to allow for closures
   from the parser)."
   (let [null-f (fn [& _] nil)]
-    [[:a    #"(?i)(?:(^|.*\s))(https?://\S+)(.*)"
+    [[:a     #"(?i)(?:(^|.*\s))(https?://\S+)(.*)"
       (fn [l]   {:href l :class "external"})]
-     [:a    #"(?:(^|.*\s))->([^\s\.]+)(.*)"
+     [:a     #"(?:(^|.*\s))->([^\s\.]+)(.*)"
       (fn [l]   {:href (str l ".html") :class "internal"})]
-     [:b    #"(.*)\*([^\*]+)\*(.*)" null-f]
-     [:i    #"(.*)/([^/]+)/(.*)"    null-f]
-     [:u    #"(.*)_([^_]+)_(.*)"    null-f]
-     [:del  #"(.*)--([^--]+)--(.*)" null-f]
-     [:img  #"(?:(^|.*\s))(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)"
+     [:b     #"(.*)\*([^\*]+)\*(.*)" null-f]
+     [:i     #"(.*)/([^/]+)/(.*)"    null-f]
+     [:u     #"(.*)_([^_]+)_(.*)"    null-f]
+     [:del   #"(.*)--([^--]+)--(.*)" null-f]
+     [:img   #"(?:(^|.*\s))(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)"
       (fn [i] {:src i :alt i})]
-     [:span #"(.*)#\?\?+()(.*)"
+     [:video #"(?:(^|.*\s))(\S+(?:\.(?:mp4|avi|wmv|webm|mov|3gp|ogg|ogv)))($|\s.*)"
+      null-f]
+     [:span  #"(.*)#\?\?+()(.*)"
       (fn [& _] {:class "missing"})]
-     [:span #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)"
+     [:span  #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)"
       (fn [& _] {:class "example"})]
-     [:code #"(.*)<([^>]+)>(.*)"    null-f]]))
+     [:code  #"(.*)<([^>]+)>(.*)"    null-f]]))
 
 (defn- parse-spans
   "Parse a string to delimit spans (bold, em, ...).
@@ -52,6 +54,7 @@
              :content (case tag
                         :a    (get-domain-name c)
                         :img  nil
+                        :video {:tag :source :attrs {:src c}}
                         :code c
                         (parse-spans c))
              :attrs (attrs c)}
