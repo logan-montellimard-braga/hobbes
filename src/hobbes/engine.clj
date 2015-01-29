@@ -99,7 +99,7 @@
      :PARAGRAPH  (fn [& c] (concat-c :p c))
      :TPARAGRAPH (fn [& c] (concat-c :p c))
      :EOL        (fn []    " ")
-     :RULE       (fn [& _] {:tag :hr})
+     :RULE       (fn []    {:tag :hr})
      :ULIST      (fn [& c] {:tag :ul :content c})
      :OLIST      (fn [& c] {:tag :ol :content c})
      :ULISTLINE  (fn [& c] (concat-c :li c))
