@@ -79,7 +79,7 @@
   [s]
   (s/lower-case (s/replace s #"\s" "_")))
 
-(defn trim-str
+(defn trim*
   "Takes a collection of strings as input and concats them, then trims the
   result.
   Returns a string."

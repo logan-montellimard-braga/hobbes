@@ -57,10 +57,10 @@
 (deftest trim-str-test
   (testing "Input is correctly concatd"
     (is (= "foobar"
-           (trim-str '("foo" "bar")))))
+           (trim* '("foo" "bar")))))
   (testing "Input is correctly trimmed"
     (is (= "foobar"
-           (trim-str ["  foo" "bar\t\f"])))))
+           (trim* ["  foo" "bar\t\f"])))))
 
 (deftest flatten-if-seq-test
   (testing "Input is a seq"

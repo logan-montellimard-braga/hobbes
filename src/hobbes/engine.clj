@@ -64,11 +64,11 @@
 (def ^:private block-transforms
   "Instaparse AST transformations to apply to blocks.
   Returns an AST of valid enlive blocks, with valid HTML5 tags."
-  (let [concat-parse (fn [s] (flatten-if-seq (parse-spans (trim-str s))))
+  (let [concat-parse (fn [s] (flatten-if-seq (parse-spans (trim* s))))
         concat-c     (fn [t c] {:tag t :content (concat-parse c)})]
     {:HEADER     (fn [{:keys [tag]} & c] {:tag (lower-keyword tag)
                                           :content (concat-parse c)
-                                          :attrs {:id (dasherize (trim-str c))}})
+                                          :attrs {:id (dasherize (trim* c))}})
      :QUOTE      (fn [{:keys [content]} & c]
                    {:tag :blockquote
                     :content (flatten (list (concat-parse c)
@@ -90,11 +90,11 @@
      :IMG        (fn [{:keys [content]} & c]
                    {:tag :figure :content
                     (flatten (list {:tag :img
-                                    :attrs {:src (trim-str c) :alt (trim-str c)}}
+                                    :attrs {:src (trim* c) :alt (trim* c)}}
                                    {:tag :figcaption
                                     :content (concat-parse content)}))})
      :VIDEO      (fn [& c] {:tag :video
-                            :content {:tag :source :attrs {:src (trim-str c)}}})
+                            :content {:tag :source :attrs {:src (trim* c)}}})
      :PARAGRAPH  (fn [& c] (concat-c :p c))
      :TPARAGRAPH (fn [& c] (concat-c :p c))
      :EOL        (fn []    " ")
