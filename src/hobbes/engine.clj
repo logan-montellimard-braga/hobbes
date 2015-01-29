@@ -64,8 +64,7 @@
 (def ^:private block-transforms
   "Instaparse AST transformations to apply to blocks.
   Returns an AST of valid enlive blocks, with valid HTML5 tags."
-  (let [trim-str     (fn [s] (clojure.string/trim (apply str s)))
-        concat-parse (fn [s] (flatten-if-seq (parse-spans (trim-str s))))
+  (let [concat-parse (fn [s] (flatten-if-seq (parse-spans (trim-str s))))
         concat-c     (fn [t c] {:tag t :content (concat-parse c)})]
     {:HEADER     (fn [{:keys [tag]} & c] {:tag (lower-keyword tag)
                                           :content (concat-parse c)
