@@ -85,8 +85,12 @@
      :CODELINE   (fn [& c] (apply str c))
      :EX         (fn [& c] {:tag :div :content (concat-c :p c)
                             :attrs {:class "example"}})
-     :IMG        (fn [& c] {:tag :img
-                            :attrs {:src (trim-str c) :alt (trim-str c)}})
+     :IMG        (fn [{:keys [content]} & c]
+                   {:tag :figure :content
+                    (flatten (list {:tag :img
+                                    :attrs {:src (trim-str c) :alt (trim-str c)}}
+                                   {:tag :figcaption
+                                    :content (concat-parse content)}))})
      :VIDEO      (fn [& c] {:tag :video
                             :content {:tag :source :attrs {:src (trim-str c)}}})
      :PARAGRAPH  (fn [& c] (concat-c :p c))

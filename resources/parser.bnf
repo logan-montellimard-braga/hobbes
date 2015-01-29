@@ -36,7 +36,8 @@ CODELINE     ::= WORD (WHITESPACE WORD)* <EOL>
 EX           ::= <EXSYM> <WHITESPACE> LINE+ <BLANKLINE>+
 <EXSYM>      ::= #"(?i)_e(x(e(m(p(l(e)?)?)?)?)?)?"
 
-IMG          ::= <IMGSYM> <WHITESPACE> LINE <BLANKLINE>?
+IMG          ::= <IMGSYM> <WHITESPACE> CAPTION <SEP> LINE <BLANKLINE>?
+CAPTION      ::= #"[^:]+"
 <IMGSYM>     ::= #"(?i)_img" | #"_(?i)i(m(a(g(e)?)?)?)?"
 
 VIDEO        ::= <VIDEOSYM> <WHITESPACE> LINE <BLANKLINE>?
