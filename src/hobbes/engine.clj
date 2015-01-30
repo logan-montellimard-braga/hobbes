@@ -7,7 +7,7 @@
 
 (def ^:private grammar-specifications
   "File instance containing the grammar specifications of the Hobbes language."
-  (clojure.java.io/resource "parser.bnf"))
+  (clojure.java.io/resource "hobbes.bnf"))
 
 (def ^:private parser
   "Loads the parser specifications for .hob files and sends it to Instaparse
