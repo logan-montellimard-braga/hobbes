@@ -115,6 +115,12 @@
           (throw (Exception. "Ill-formed .hob file")))
       ast)))
 
+(defn- split-at-blocks
+  "Takes a string and returns a coll of strings, split on blocks ,based
+  on hob grammar specifications."
+  [input]
+  (remove clojure.string/blank? (clojure.string/split input #"(?m)^(?=_\S+)")))
+
 (defn parse
   "Parse input.
   Input must be treated beforehand; see preprocessor namespace, otherwise
@@ -122,5 +128,6 @@
   Returns an instaparse AST suitable for transformation."
   [input]
   (->> input
-       (parse-blocks)
+       (split-at-blocks)
+       (mapcat parse-blocks)
        (insta/transform block-transforms)))
