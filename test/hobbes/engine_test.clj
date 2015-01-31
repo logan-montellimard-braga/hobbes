@@ -40,6 +40,14 @@
                                                          :class "internal"}} "")
            (#'hobbes.engine/parse-spans "here a ->link")))))
 
+(deftest split-at-blocks-test
+  (testing "Input shouldn't be split"
+    (is (= '("foo")
+           (#'hobbes.engine/split-at-blocks "foo"))))
+  (testing "Input should be split"
+    (is (= '("foo\n\n" "_t title\nbar")
+           (#'hobbes.engine/split-at-blocks "foo\n\n_t title\nbar")))))
+
 (deftest parse-test
   (testing "Empty input"
     (is (= '()

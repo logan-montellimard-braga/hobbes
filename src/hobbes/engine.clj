@@ -116,7 +116,7 @@
       ast)))
 
 (defn- split-at-blocks
-  "Takes a string and returns a coll of strings, split on blocks ,based
+  "Takes a string and returns a coll of strings, split on blocks, based
   on hob grammar specifications."
   [input]
   (remove clojure.string/blank? (clojure.string/split input #"(?m)^(?=_\S+)")))
