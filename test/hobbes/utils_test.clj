@@ -54,7 +54,7 @@
     (is (= "foo_bar_baz"
            (dasherize "Foo Bar baz")))))
 
-(deftest trim-str-test
+(deftest trim*-test
   (testing "Input is correctly concatd"
     (is (= "foobar"
            (trim* '("foo" "bar")))))
