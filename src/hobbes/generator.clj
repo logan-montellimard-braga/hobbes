@@ -18,15 +18,15 @@
 
 (e/defsnippet header (tmpl "header") [:header]
   [opts]
-  [:.hob-date]  (e/content (.format (java.text.SimpleDateFormat. "dd-MM-yyyy")
-                                    (java.util.Date.)))
-  [:.hob-title] (e/content "")
-  [:.hob-desc]  (e/content "")
-  [:.hob-author (e/content (System/getProperty "user.name"))])
+  [:.hob-date]   (e/content (.format (java.text.SimpleDateFormat. "dd-MM-yyyy")
+                                     (java.util.Date.)))
+  [:.hob-title]  (e/content "")
+  [:.hob-desc]   (e/content "")
+  [:.hob-author] (e/content (System/getProperty "user.name")))
 
 (e/defsnippet main (tmpl "content") [:main]
-  [ast]
-  identity)
+  [tree]
+  [:.hob-content] (e/content tree))
 
 (e/defsnippet footer (tmpl "footer") [:footer]
   [opts]
@@ -34,12 +34,28 @@
   [:.hob-next-lecture] (e/content ""))
 
 (e/deftemplate layout (clojure.java.io/resource "default/template/layout.html")
-  [& args]
-  [:html]   (e/set-attr :lang (System/getProperty "user.language"))
-  [:head]   (e/substitute (head ""))
-  [:header] (e/substitute (header ""))
-  [:main]   (e/substitute (main ""))
-  [:footer] (e/substitute (footer "")))
+  [tree opts klass]
+  [:html]   (e/set-attr   :lang (System/getProperty "user.language"))
+  [:body]   (e/add-class  (name klass))
+  [:head]   (e/substitute (head   opts))
+  [:header] (e/substitute (header opts))
+  [:main]   (e/substitute (main   tree))
+  [:footer] (e/substitute (footer opts)))
 
-(defn generate
-  [ast options & tmpl-dir])
+
+; Public API
+(defn generate-course
+  "Takes an enlive-like AST as input and a map of options, and returns the html
+  generated with the course layout as a string."
+  [tree options & tmpl-dir]
+  (apply str (layout tree options :course)))
+
+(defn generate-topic
+  "Takes an enlive-like AST as input and a map of options, and returns the html
+  generated with the topic-page layout as a string."
+  [tree options & tmpl-dir])
+
+(defn generate-index
+  "Takes an enlive-like AST as input and a map of options, and returns the html
+  generated with the index-page layout as a string."
+  [tree options & tmpl-dir])
