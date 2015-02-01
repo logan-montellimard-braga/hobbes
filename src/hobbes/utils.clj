@@ -46,6 +46,14 @@
   [f coll]
   (first (filter f coll)))
 
+(defn pmapcat
+  "mapcat with parallelism; fusion of mapcat and pmap.
+  Takes a function f and a coll as input, and concurrently applies f to each
+  item in coll, then concats the result. Order of items is conserved.
+  Returns a coll."
+  [f coll]
+  (apply concat (pmap f coll)))
+
 ;;;
 ; Keywords, symbols and strings utilities
 ;;;

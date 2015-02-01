@@ -129,5 +129,5 @@
   [input]
   (->> input
        (split-at-blocks)
-       (mapcat parse-blocks)
+       (pmapcat parse-blocks)
        (insta/transform block-transforms)))
