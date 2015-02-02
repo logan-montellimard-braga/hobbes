@@ -94,6 +94,15 @@
   [string]
   (s/trim (apply str string)))
 
+(defn date-now
+  "Returns the current date as string in format day-month-year.
+  May take an optional format string as argument to customize the formatting.
+  Note: only a dummy wrapper, nothing fancy here."
+  [& [format]]
+  (let [now (java.util.Date.)
+        fmt (or format "dd-MM-yyyy")]
+    (.format (java.text.SimpleDateFormat. fmt) now)))
+
 ;;;
 ; File utilities
 ;;;
