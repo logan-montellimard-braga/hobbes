@@ -11,27 +11,26 @@
   (clojure.java.io/resource (str "default/template/topics/" string ".html")))
 
 (e/defsnippet head (tmpl "head") [:head]
-  [opts]
-  [(e/attr= :name "author")] (e/set-attr
-                               :content (System/getProperty "user.name"))
-  [:title]                   (e/content "foo"))
+  [m]
+  [[:meta (e/attr= :name "author")]]      (e/set-attr :content (m :author))
+  [[:meta (e/attr= :name "description")]] (e/set-attr :content (m :desc))
+  [:title]                                (e/content  (m :title)))
 
 (e/defsnippet header (tmpl "header") [:header]
-  [opts]
-  [:.hob-date]   (e/content (.format (java.text.SimpleDateFormat. "dd-MM-yyyy")
-                                     (java.util.Date.)))
-  [:.hob-title]  (e/content "")
-  [:.hob-desc]   (e/content "")
-  [:.hob-author] (e/content (System/getProperty "user.name")))
+  [m]
+  [:.hob-date]   (e/content (date-now))
+  [:.hob-title]  (e/content (m :title))
+  [:.hob-desc]   (e/content (m :desc))
+  [:.hob-author] (e/content (m :author)))
 
 (e/defsnippet main (tmpl "content") [:main]
   [tree]
   [:.hob-content] (e/content tree))
 
 (e/defsnippet footer (tmpl "footer") [:footer]
-  [opts]
-  [:.hob-prev-lecture] (e/content "")
-  [:.hob-next-lecture] (e/content ""))
+  [m]
+  [:.hob-prev-lecture] (e/content (m :prev))
+  [:.hob-next-lecture] (e/content (m :next)))
 
 (e/deftemplate layout (clojure.java.io/resource "default/template/layout.html")
   [tree opts klass]
