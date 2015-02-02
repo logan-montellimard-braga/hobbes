@@ -56,4 +56,4 @@
   (testing "Preprocessing multiline input."
     (is (= "Trimmed,\nno comments,\nnew-padding .\n"
            (preprocess "  \tTrimmed,!!comment\nno    comments,\n~padding ."
-                       {:padding :new-padding})))))
+                       {:padding :new-padding} {:date "" :jour "" :mois ""})))))
