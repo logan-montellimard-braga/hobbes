@@ -62,6 +62,16 @@
     (is (= "foobar"
            (trim* ["  foo" "bar\t\f"])))))
 
+(deftest date-now-test
+  (testing "No arg call"
+    (is (= (.format (java.text.SimpleDateFormat. "dd-MM-yyyy")
+                    (java.util.Date.))
+           (date-now))))
+  (testing "Format as arg"
+    (is (= (.format (java.text.SimpleDateFormat. "MM")
+                    (java.util.Date.))
+           (date-now "MM")))))
+
 (deftest flatten-if-seq-test
   (testing "Input is a seq"
     (is (= '("foo" "bar")
