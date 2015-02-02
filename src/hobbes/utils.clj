@@ -8,7 +8,7 @@
   [input]
   (cond
     (= java.util.regex.Pattern (class input)) input
-    (= clojure.lang.PersistentList (class input)) (eval input)
+    (= clojure.lang.PersistentList (class input)) (str (eval input) " ")
     :else (str (name input) " ")))
 
 (defn map-replace
