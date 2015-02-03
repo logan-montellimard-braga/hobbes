@@ -4,6 +4,15 @@
   (:require [net.cgrand.enlive-html :as e]
             [hobbes.utils :refer :all]))
 
+(def ^:private base-path
+  "Contains the base, default path for the templates directory"
+  (atom (.toString (clojure.java.io/resource "default/template"))))
+
+(defn- set-base-path
+  "Sets the base path of the corresponding atom to provided input."
+  [path]
+  (reset! base-path path))
+
 (defn- tmpl
   "Takes a string as input and returns the path to the corresponding enlive
   template as a string."
