@@ -1,7 +1,8 @@
 (ns hobbes.utils
   "Utility functions."
   (:require [clojure.string :as s]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.edn :as edn]))
 
 (defn name-or-re
   "If input is a regex, returns it. Otherwise, returns (name input)."
@@ -118,4 +119,4 @@
 (defn eval-map-resource
   "Evals the content of given resource file, and returns it."
   [file]
-  (read-string (slurp (io/resource file))))
+  (edn/read-string (slurp (io/resource file))))
