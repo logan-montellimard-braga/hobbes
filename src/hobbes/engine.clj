@@ -52,10 +52,10 @@
       (list (parse-spans before)
             {:tag tag
              :content (case tag
-                        :a    (get-domain-name c)
-                        :img  nil
+                        :a     (get-domain-name c)
+                        :img   nil
                         :video {:tag :source :attrs {:src c}}
-                        :code c
+                        :code  c
                         (parse-spans c))
              :attrs (attrs c)}
             (parse-spans after)))
