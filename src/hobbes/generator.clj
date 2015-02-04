@@ -6,42 +6,76 @@
 
 (def ^:private base-path
   "Contains the base, default path for the templates directory"
-  (atom (.toString (clojure.java.io/resource "default/template"))))
+  (atom "default/template/"))
 
 (defn- set-base-path
   "Sets the base path of the corresponding atom to provided input."
   [path]
   (reset! base-path path))
 
-(defn- tmpl
-  "Takes a string as input and returns the path to the corresponding enlive
+(defn- get-tmpl-name
+  "Takes a string as input and returns the path to the corresponding html
   template as a string."
   [string]
-  (clojure.java.io/resource (str "default/template/topics/" string ".html")))
+  (clojure.java.io/resource (str @base-path string ".html")))
 
-(e/defsnippet head (tmpl "head") [:head]
+(def ^:private tmpl-list
+  "Mutable map atom containing dynamically defined enlive templates."
+  (atom {}))
+
+(def ^:private snippet-list
+  "Mutable map atom containing dynamically defined enlive snippets."
+  (atom {}))
+
+(defmacro ^:private deftemplate-dynamic
+  "Takes a symbol name, a source path string, args and defining forms and
+  generates an enlive template dynamically. Used to allow for different path
+  for same template based on arguments."
+  [name source args & forms]
+  `(defn- ~name [& args#]
+     (let [src# (get-tmpl-name ~source)]
+       (if-let [template# (get @tmpl-list src#)]
+         (apply template# args#)
+         (let [template# (e/template src# ~args ~@forms)]
+           (swap! tmpl-list assoc src# template#)
+           (apply template# args#))))))
+
+(defmacro ^:private defsnippet-dynamic
+  "Takes a symbol name, a source path string, a root selector, args and
+  defining forms and generates an enlive snippet dynamically.
+  Used to allow for different path for same snippet based on arguments."
+  [name source selector args & forms]
+  `(defn- ~name [& args#]
+     (let [src# (get-tmpl-name ~source)]
+       (if-let [snippet# (get @snippet-list src#)]
+         (apply snippet# args#)
+         (let [snippet# (e/snippet src# ~selector ~args ~@forms)]
+           (swap! snippet-list assoc src# snippet#)
+           (apply snippet# args#))))))
+
+(defsnippet-dynamic head "topics/head" [:head]
   [m]
   [[:meta (e/attr= :name "author")]]      (e/set-attr :content (m :author))
   [[:meta (e/attr= :name "description")]] (e/set-attr :content (m :desc))
   [:title]                                (e/content  (m :title)))
 
-(e/defsnippet header (tmpl "header") [:header]
+(defsnippet-dynamic header "topics/header" [:header]
   [m]
   [:.hob-date]   (e/content (date-now))
   [:.hob-title]  (e/content (m :title))
   [:.hob-desc]   (e/content (m :desc))
   [:.hob-author] (e/content (m :author)))
 
-(e/defsnippet main (tmpl "content") [:main]
+(defsnippet-dynamic main "topics/content" [:main]
   [tree]
   [:.hob-content] (e/content tree))
 
-(e/defsnippet footer (tmpl "footer") [:footer]
+(defsnippet-dynamic footer "topics/footer" [:footer]
   [m]
   [:.hob-prev-lecture] (e/content (m :prev))
   [:.hob-next-lecture] (e/content (m :next)))
 
-(e/deftemplate layout (clojure.java.io/resource "default/template/layout.html")
+(deftemplate-dynamic layout "layout"
   [tree opts klass]
   [:html]   (e/set-attr   :lang (System/getProperty "user.language"))
   [:body]   (e/add-class  (name klass))
