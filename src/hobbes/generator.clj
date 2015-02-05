@@ -8,7 +8,7 @@
   "Contains the base, default path for the templates directory"
   (atom "default/template/"))
 
-(defn- set-base-path
+(defn- set-base-path!
   "Sets the base path of the corresponding atom to provided input."
   [path]
   (reset! base-path path))
