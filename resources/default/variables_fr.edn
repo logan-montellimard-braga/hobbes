@@ -1,7 +1,7 @@
 {
- :date   (date-now)
- :jour   (date-now "E")
- :mois   (date-now "M")
+ :date   (.format (java.text.SimpleDateFormat. "dd-MM-yyyy") (java.util.Date.))
+ :jour   (.format (java.text.SimpleDateFormat. "E") (java.util.Date.))
+ :mois   (.format (java.text.SimpleDateFormat. "M") (java.util.Date.))
  :auteur (System/getProperty "user.name")
  :langue (System/getProperty "user.language")
  :pays   (System/getProperty "user.country")
