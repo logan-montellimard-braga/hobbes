@@ -33,7 +33,8 @@
      [:del   #"(.*)--([^--]+)--(.*)" null-f]
      [:img   #"(?:(^|.*\s))(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)"
       (fn [i] {:src i :alt i})]
-     [:video #"(?:(^|.*\s))(\S+(?:\.(?:mp4|avi|wmv|webm|mov|3gp|ogg|ogv)))($|\s.*)"
+     [:video
+      #"(?:(^|.*\s))(\S+(?:\.(?:mp4|avi|wmv|webm|mov|3gp|ogg|ogv)))($|\s.*)"
       null-f]
      [:span  #"(.*)#\?\?+()(.*)"
       (fn [& _] {:class "missing"})]
@@ -71,17 +72,18 @@
                                           :attrs {:id (dasherize (trim* c))}})
      :QUOTE      (fn [{:keys [content]} & c]
                    {:tag :blockquote
-                    :content (flatten (list (concat-parse c)
-                                            {:tag :cite
-                                             :content (concat-parse content)}))})
+                    :content (flatten
+                              (list (concat-parse c)
+                                    {:tag :cite
+                                     :content (concat-parse content)}))})
      :DEF        (fn [{:keys [content]} & c]
                    {:tag :div :attrs {:class "definition"}
                     :content {:tag :p
                               :content (flatten
-                                         (list {:tag :span
-                                                :attrs {:class "deftitle"}
-                                                :content (concat-parse content)}
-                                               (concat-parse c)))}})
+                                        (list {:tag :span
+                                               :attrs {:class "deftitle"}
+                                               :content (concat-parse content)}
+                                              (concat-parse c)))}})
      :CODE       (fn [& c] {:tag :pre
                             :content {:tag :code :content (interpose "\n" c)}})
      :CODELINE   (fn [& c] (apply str c))

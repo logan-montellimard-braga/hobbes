@@ -31,8 +31,8 @@
   "Takes a symbol name, a source path string, args and defining forms and
   generates an enlive template dynamically. Used to allow for different path
   for same template based on arguments."
-  [name source args & forms]
-  `(defn- ~name [& args#]
+  [label source args & forms]
+  `(defn- ~label [& args#]
      (let [src# (get-tmpl-name ~source)]
        (if-let [template# (get @tmpl-list src#)]
          (apply template# args#)
@@ -44,8 +44,8 @@
   "Takes a symbol name, a source path string, a root selector, args and
   defining forms and generates an enlive snippet dynamically.
   Used to allow for different path for same snippet based on arguments."
-  [name source selector args & forms]
-  `(defn- ~name [& args#]
+  [label source selector args & forms]
+  `(defn- ~label [& args#]
      (let [src# (get-tmpl-name ~source)]
        (if-let [snippet# (get @snippet-list src#)]
          (apply snippet# args#)
@@ -90,7 +90,7 @@
   "Takes an enlive-like AST as input and a map of options, and returns the html
   generated with the course layout as a string."
   [tree options & tmpl-dir]
-  (apply str (layout tree options :course)))
+  (clojure.string/join (layout tree options :course)))
 
 (defn generate-topic
   "Takes an enlive-like AST as input and a map of options, and returns the html

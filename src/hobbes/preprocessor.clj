@@ -33,7 +33,7 @@
 ; Soon to be deprecated, certainly
 (defn- add-padding-newlines
   "Add newlines to end of string if needed, to correctly treat last element,
-  because special elements at end of input (ie: not paragraphs) are treated as 
+  because special elements at end of input (ie: not paragraphs) are treated as
   paragraphs by the parser if there is no 2 trailing newlines after them.
   Returns the treated input."
   [input]
@@ -63,7 +63,7 @@
   (try
     (let [lang (System/getProperty "user.language")]
       (parse-props (clojure.java.io/resource
-                     (str "default/abbreviations_" lang ".properties"))))
+                    (str "default/abbreviations_" lang ".properties"))))
     (catch Exception e
       {})))
 

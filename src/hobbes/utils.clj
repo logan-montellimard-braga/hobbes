@@ -20,8 +20,8 @@
   ([string] string)
   ([m string]
    (reduce
-     (fn [acc [k v]] (s/replace acc (name-or-re k) (name-or-re v)))
-     string m)))
+    (fn [acc [k v]] (s/replace acc (name-or-re k) (name-or-re v)))
+    string m)))
 
 (defn add-prefix-to-map-keys
   "Takes a map and a prefix string, and adds the prefix to each key of the map,
@@ -93,7 +93,7 @@
   result.
   Returns a string."
   [string]
-  (s/trim (apply str string)))
+  (s/trim (s/join string)))
 
 (defn date-now
   "Returns the current date as string in format day-month-year.
