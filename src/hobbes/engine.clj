@@ -77,13 +77,10 @@
                                     {:tag :cite
                                      :content (concat-parse content)}))})
      :DEF        (fn [{:keys [content]} & c]
-                   {:tag :div :attrs {:class "definition"}
-                    :content {:tag :p
-                              :content (flatten
-                                        (list {:tag :span
-                                               :attrs {:class "deftitle"}
-                                               :content (concat-parse content)}
-                                              (concat-parse c)))}})
+                   {:tag :dl
+                    :content (flatten
+                               (list {:tag :dt :content (concat-parse content)}
+                                     {:tag :dd :content (concat-parse c)}))})
      :CODE       (fn [& c] {:tag :pre
                             :content {:tag :code :content (interpose "\n" c)}})
      :CODELINE   (fn [& c] (apply str c))
