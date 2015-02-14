@@ -73,15 +73,11 @@
                                           :attrs {:id (dasherize (trim* c))}})
      :QUOTE      (fn [{:keys [content]} & c]
                    {:tag :blockquote
-                    :content (flatten
-                              (list (concat-parse c)
-                                    {:tag :cite
-                                     :content (concat-parse content)}))})
+                    :content (flatten (list (concat-parse c)
+                                            (concat-c :cite content)))})
      :DEF        (fn [{:keys [content]} & c]
-                   {:tag :dl
-                    :content (flatten
-                               (list {:tag :dt :content (concat-parse content)}
-                                     {:tag :dd :content (concat-parse c)}))})
+                   {:tag :dl :content (flatten (list (concat-c :dt content)
+                                                     (concat-c :dd c)))})
      :CODE       (fn [& c] {:tag :pre
                             :content {:tag :code :content (interpose "\n" c)}})
      :CODELINE   (fn [& c] (apply str c))
@@ -91,8 +87,7 @@
                    {:tag :figure :content
                     (flatten (list {:tag :img
                                     :attrs {:src (trim* c) :alt (trim* c)}}
-                                   {:tag :figcaption
-                                    :content (concat-parse content)}))})
+                                   (concat-c :figcaption content)))})
      :VIDEO      (fn [& c] {:tag :video
                             :content {:tag :source :attrs {:src (trim* c)}}})
      :PARAGRAPH  (fn [& c] (concat-c :p c))
