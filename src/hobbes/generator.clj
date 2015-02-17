@@ -4,20 +4,22 @@
   (:require [net.cgrand.enlive-html :as e]
             [hobbes.utils :refer :all]))
 
-(def ^:private base-path
-  "Contains the base, default path for the templates directory"
-  (atom "default/template/"))
+(def ^:private default-templates
+  "Map containing the default templates as files."
+  (let [default-path "default/template/"
+        tmpl (fn [s] (clojure.java.io/resource (str default-path s ".html")))]
+    (atom
+     {:layout  (tmpl "layout")
+      :head    (tmpl "topics/head")
+      :header  (tmpl "topics/header")
+      :content (tmpl "topics/content")
+      :footer  (tmpl "topics/footer")})))
 
-(defn- set-base-path!
-  "Sets the base path of the corresponding atom to provided input."
-  [path]
-  (reset! base-path path))
-
-(defn- get-tmpl-name
-  "Takes a string as input and returns the path to the corresponding html
-  template as a string."
-  [string]
-  (clojure.java.io/resource (str @base-path string ".html")))
+(defn- set-templates
+  "Takes a map m and merges its content with the default-templates map,
+  effectively overriding default template files with provided ones."
+  [m]
+  (swap! default-templates merge m))
 
 (def ^:private tmpl-list
   "Mutable map atom containing dynamically defined enlive templates."
@@ -27,55 +29,55 @@
   "Mutable map atom containing dynamically defined enlive snippets."
   (atom {}))
 
-(defmacro ^:private deftemplate-dynamic
+(defmacro ^:private deftemplate-lazy
   "Takes a symbol name, a source path string, args and defining forms and
   generates an enlive template dynamically. Used to allow for different path
   for same template based on arguments."
   [label source args & forms]
   `(defn- ~label [& args#]
-     (let [src# (get-tmpl-name ~source)]
+     (let [src# (@default-templates ~source)]
        (if-let [template# (get @tmpl-list src#)]
          (apply template# args#)
          (let [template# (e/template src# ~args ~@forms)]
            (swap! tmpl-list assoc src# template#)
            (apply template# args#))))))
 
-(defmacro ^:private defsnippet-dynamic
+(defmacro ^:private defsnippet-lazy
   "Takes a symbol name, a source path string, a root selector, args and
   defining forms and generates an enlive snippet dynamically.
   Used to allow for different path for same snippet based on arguments."
   [label source selector args & forms]
   `(defn- ~label [& args#]
-     (let [src# (get-tmpl-name ~source)]
+     (let [src# (@default-templates ~source)]
        (if-let [snippet# (get @snippet-list src#)]
          (apply snippet# args#)
          (let [snippet# (e/snippet src# ~selector ~args ~@forms)]
            (swap! snippet-list assoc src# snippet#)
            (apply snippet# args#))))))
 
-(defsnippet-dynamic head "topics/head" [:head]
+(defsnippet-lazy head :head [:head]
   [m]
   [[:meta (e/attr= :name "author")]]      (e/set-attr :content (m :author))
   [[:meta (e/attr= :name "description")]] (e/set-attr :content (m :desc))
   [:title]                                (e/content  (m :title)))
 
-(defsnippet-dynamic header "topics/header" [:header]
+(defsnippet-lazy header :header [:header]
   [m]
   [:.hob-date]   (e/content (date-now))
   [:.hob-title]  (e/content (m :title))
   [:.hob-desc]   (e/content (m :desc))
   [:.hob-author] (e/content (m :author)))
 
-(defsnippet-dynamic main "topics/content" [:main]
+(defsnippet-lazy main :content [:main]
   [tree]
   [:.hob-content] (e/content tree))
 
-(defsnippet-dynamic footer "topics/footer" [:footer]
+(defsnippet-lazy footer :footer [:footer]
   [m]
   [:.hob-prev-lecture] (e/content (m :prev))
   [:.hob-next-lecture] (e/content (m :next)))
 
-(deftemplate-dynamic layout "layout"
+(deftemplate-lazy layout :layout
   [tree opts klass]
   [:html]   (e/set-attr   :lang (System/getProperty "user.language"))
   [:body]   (e/add-class  (name klass))
@@ -89,15 +91,16 @@
 (defn generate-course
   "Takes an enlive-like AST as input and a map of options, and returns the html
   generated with the course layout as a string."
-  [tree options & tmpl-dir]
-  (clojure.string/join (layout tree options :course)))
+  [tree options tmpl-map]
+  (do (set-templates tmpl-map)
+      (clojure.string/join (layout tree options :course))))
 
 (defn generate-topic
   "Takes an enlive-like AST as input and a map of options, and returns the html
   generated with the topic-page layout as a string."
-  [tree options & tmpl-dir])
+  [tree options & tmpl-map])
 
 (defn generate-index
   "Takes an enlive-like AST as input and a map of options, and returns the html
   generated with the index-page layout as a string."
-  [tree options & tmpl-dir])
+  [tree options & tmpl-map])
