@@ -1,8 +1,10 @@
 (ns hobbes.utils
   "Utility functions."
-  (:require [clojure.string :as s]
+  (:require [clojure.string  :as s]
             [clojure.java.io :as io]
-            [clojure.edn :as edn]))
+            [me.raynes.fs    :as f]
+            [clojure.edn     :as edn])
+  (:import  [java.util.jar JarFile JarEntry]))
 
 (defn name-or-re
   "If input is a regex, returns it. Otherwise, returns (name input)."
@@ -120,3 +122,25 @@
   "Evals the content of given resource file, and returns it."
   [file]
   (edn/read-string (slurp (io/resource file))))
+
+(defn get-running-jar
+  "Get the path of the running jar."
+  []
+  (-> (class *ns*)
+      .getProtectionDomain .getCodeSource .getLocation .getPath))
+
+(defn extract-dir-from-jar
+  "Takes the path of a jar, a dir name inside that jar and a destination dir,
+  and copies the from dir to the to dir."
+  [^String jar-dir from to]
+  (let [jar (JarFile. jar-dir)]
+    (doseq [^JarEntry file (enumeration-seq (.entries jar))]
+      (if (.startsWith (.getName file) from)
+        (let [f (f/file to (.getName file))]
+          (if (.isDirectory file)
+            (f/mkdir f)
+            (do (f/mkdirs (f/parent f))
+                (with-open [is (.getInputStream jar file)
+                            os (io/output-stream f)]
+                  (while (pos? (.available is))
+                    (.write os (.read is)))))))))))
