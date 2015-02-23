@@ -130,8 +130,8 @@
       .getProtectionDomain .getCodeSource .getLocation .getPath))
 
 (defn extract-dir-from-jar
-  "Takes the path of a jar, a dir name inside that jar and a destination dir,
-  and copies the from dir to the to dir."
+  "Takes the string path of a jar, a dir name inside that jar and a destination
+  dir, and copies the from dir to the to dir."
   [^String jar-dir from to]
   (let [jar (JarFile. jar-dir)]
     (doseq [^JarEntry file (enumeration-seq (.entries jar))]
@@ -142,5 +142,4 @@
             (do (f/mkdirs (f/parent f))
                 (with-open [is (.getInputStream jar file)
                             os (io/output-stream f)]
-                  (while (pos? (.available is))
-                    (.write os (.read is)))))))))))
+                  (io/copy is os)))))))))
