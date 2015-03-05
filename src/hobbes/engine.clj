@@ -2,7 +2,7 @@
   "Engine used to parse .hob input and return a parse tree for
   further processing."
   (:require [instaparse.core :as insta]
-            [hobbes.utils :refer :all]))
+            [hobbes.utils    :refer :all]))
 
 
 (def ^:private grammar-specifications
@@ -56,7 +56,7 @@
              :content (case tag
                         :a     (get-domain-name c)
                         :img   nil
-                        :video {:tag :source :attrs {:src c}}
+                        :video '({:tag :source :attrs {:src ~c}})
                         :code  c
                         (parse-spans c))
              :attrs (attrs c)}
