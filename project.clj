@@ -1,6 +1,6 @@
 (defproject hobbes "0.1.0-SNAPSHOT"
   :description "Compiler transforming courses in .hob format to beautiful, local, static sites."
-  :url "http://hobbes-lang.herokuapp.com"
+  :url "http://hobbes-lang.org"
   :license {:name "GNU/GPL v3"
             :url "http://www.gnu.org/licenses/gpl-3.0.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
