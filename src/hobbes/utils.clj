@@ -106,6 +106,14 @@
         fmt (or format "dd-MM-yyyy")]
     (.format (java.text.SimpleDateFormat. fmt) now)))
 
+(defn filename->title
+  "Takes a string representing a typical file name (eg: snake_case or camelCase)
+  and returns a title-ized version with separated, capitalized words.
+  Capitalization rules may not suit all locales."
+  [string]
+  (s/join " " (map #(-> % s/trim s/capitalize)
+                   (s/split (s/replace string "_" " ") #"(?=[A-Z\s])"))))
+
 ;;;
 ; File utilities
 ;;;
