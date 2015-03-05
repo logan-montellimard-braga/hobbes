@@ -36,7 +36,7 @@
       (fn [i] {:src i :alt i})]
      [:video
       #"(?:(^|.*\s))(\S+(?:\.(?:mp4|avi|wmv|webm|mov|3gp|ogg|ogv)))($|\s.*)"
-      null-f]
+      (fn [& _] {:controls nil})]
      [:span   #"(.*)#\?\?+()(.*)"
       (fn [& _] {:class "missing"})]
      [:span   #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)"
@@ -56,7 +56,7 @@
              :content (case tag
                         :a     (get-domain-name c)
                         :img   nil
-                        :video '({:tag :source :attrs {:src ~c}})
+                        :video (list {:tag :source :attrs {:src c}})
                         :code  c
                         (parse-spans c))
              :attrs (attrs c)}
