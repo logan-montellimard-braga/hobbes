@@ -118,10 +118,17 @@
       (catch java.io.FileNotFoundException e))
     (into {} props)))
 
-(defn eval-map-resource
-  "Evals the content of given resource file, and returns it."
+(defn eval-map
+  "Evals the content of given edn file, and returns it."
   [file]
-  (edn/read-string (slurp (io/resource file))))
+  (try
+    (edn/read-string (slurp file))
+    (catch Exception e {})))
+
+(defn eval-map-resource
+  "Evals the content of given resource edn file, and returns it."
+  [file]
+  (eval-map (io/resource file)))
 
 (defn get-running-jar
   "Get the path of the running jar."
@@ -134,12 +141,13 @@
   dir, and copies the from dir to the to dir."
   [^String jar-dir from to]
   (let [jar (JarFile. jar-dir)]
-    (doseq [^JarEntry file (enumeration-seq (.entries jar))]
-      (if (.startsWith (.getName file) from)
-        (let [f (f/file to (.getName file))]
-          (if (.isDirectory file)
-            (f/mkdir f)
-            (do (f/mkdirs (f/parent f))
-                (with-open [is (.getInputStream jar file)
-                            os (io/output-stream f)]
-                  (io/copy is os)))))))))
+    (doseq [^JarEntry file (filter (fn [^JarEntry e]
+                                    (re-matches from (.getName e)))
+                                   (enumeration-seq (.entries jar)))]
+      (let [f (f/file to (.getName file))]
+        (if (.isDirectory file)
+          (f/mkdir f)
+          (do (f/mkdirs (f/parent f))
+              (with-open [is (.getInputStream jar file)
+                          os (io/output-stream f)]
+                (io/copy is os))))))))
