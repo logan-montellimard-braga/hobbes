@@ -73,8 +73,8 @@
   (count (s/split string #"\s")))
 
 (defn compute-estimated-reading-time
-  "Takes a string and calculates estimated reading time based on arbitrary
-  standards.
+  "Takes a string and a words-per-minute number and calculates estimated
+  reading time for this string.
   Returns a map of the form {:unit value}."
   [string wpm]
   (let [words   (count-words string)
@@ -90,10 +90,7 @@
   Input may also be a string.
   Returns a keyword."
   [k]
-  (->> k
-       (name)
-       (s/lower-case)
-       (keyword)))
+  (->> k name s/lower-case keyword))
 
 (defn filename->title
   "Takes a string representing a typical file name (eg: snake_case or camelCase)
