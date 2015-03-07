@@ -3,6 +3,7 @@
   (:require [clojure.string  :as s]
             [clojure.java.io :as io]
             [me.raynes.fs    :as f]
+            [clojure.walk    :as w]
             [clojure.edn     :as edn])
   (:import  [java.util.jar JarFile JarEntry]))
 
@@ -57,6 +58,30 @@
   [f coll]
   (apply concat (pmap f coll)))
 
+(defn extract-strings
+  "Takes a coll and returns a string composed of the concatenation of all
+  the strings in coll, recursively."
+  [coll]
+  (let [strs (atom [])]
+    (w/postwalk #(if (= java.lang.String (class %))
+                              (swap! strs conj %)) coll)
+    (clojure.string/join " " @strs)))
+
+(defn count-words
+  "Takes a string and returns the number of words, as separated by spaces."
+  [string]
+  (count (s/split string #"\s")))
+
+(defn compute-estimated-reading-time
+  "Takes a string and calculates estimated reading time based on arbitrary
+  standards.
+  Returns a map of the form {:unit value}."
+  [string wpm]
+  (let [words   (count-words string)
+        minutes (Math/floor (/ words wpm))
+        seconds (Math/floor (/ (mod words wpm) (/ wpm 60)))]
+    {:m (str (int minutes)) :s (str (int seconds))}))
+
 ;;;
 ; Keywords, symbols and strings utilities
 ;;;
@@ -70,17 +95,26 @@
        (s/lower-case)
        (keyword)))
 
+(defn filename->title
+  "Takes a string representing a typical file name (eg: snake_case or camelCase)
+  and returns a title-ized version with separated, capitalized words.
+  Capitalization rules may not suit all locales."
+  [string]
+  (s/join " " (remove s/blank? (map #(-> % s/trim s/capitalize)
+                                    (s/split (s/replace string "_" " ")
+                                             #"(?=[A-Z\s])")))))
+
 (defn get-domain-name
   "Takes a string as input and tries to parse it as a URL. If it succeeds,
   returns the domain name minus 'www.' if it was present. If it fails, returns
-  the capitalized, original input."
+  the input as an hob title."
   [url]
   (try
     (if-let [host (.getHost (java.net.URI. url))]
       (if (.startsWith host "www.")
         (subs host 4)
         host)
-      (s/capitalize url))
+      (filename->title url))
     (catch Exception e
       url)))
 
@@ -105,14 +139,6 @@
   (let [now (java.util.Date.)
         fmt (or format "dd-MM-yyyy")]
     (.format (java.text.SimpleDateFormat. fmt) now)))
-
-(defn filename->title
-  "Takes a string representing a typical file name (eg: snake_case or camelCase)
-  and returns a title-ized version with separated, capitalized words.
-  Capitalization rules may not suit all locales."
-  [string]
-  (s/join " " (map #(-> % s/trim s/capitalize)
-                   (s/split (s/replace string "_" " ") #"(?=[A-Z\s])"))))
 
 ;;;
 ; File utilities
