@@ -116,6 +116,37 @@
   [input]
   (remove clojure.string/blank? (clojure.string/split input #"(?m)^(?=_\S+)")))
 
+(defn to-links
+  "Takes a coll and returns an enlive map of li elements with links."
+  [coll]
+  {:tag :ul
+   :content (map (fn [item] {:tag :li :content
+                             (list {:tag :a :content (filename->title item)
+                                    :attrs {:href (str item ".html")}})})
+                 coll)})
+
+(defn to-index-struct
+  "Takes a coll of [dir '(files)] and returns an enlive map of structured
+  content for index page generation."
+  [coll]
+  {:tag :ul :content
+   (map (fn [[dir f]]
+          {:tag :li :content
+           (list {:tag :span :attrs {:class "topic"}
+                  :content (list dir
+                                 {:tag :span
+                                  :content (str (count f))
+                                  :attrs {:class "number"}})}
+                 {:tag :ul
+                  :content (map (fn [i]
+                                  {:tag :li :content (list
+                                   {:tag :a
+                                    :content (filename->title
+                                              (subs i 0 (.lastIndexOf i ".")))
+                                    :attrs {:href (str "topics/" dir "/" i)}})})
+                                f)})})
+        coll)})
+
 (defn parse
   "Parse input.
   Input must be treated beforehand; see preprocessor namespace, otherwise
