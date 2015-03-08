@@ -2,7 +2,7 @@
   "Generator namespace, used to transform valid HTML5 AST into complete web
   pages."
   (:require [net.cgrand.enlive-html :as e]
-            [hobbes.utils :refer :all]))
+            [hobbes.utils           :refer :all]))
 
 (def ^:private default-templates
   "Map containing the default templates as files."
@@ -10,6 +10,7 @@
         tmpl (fn [s] (clojure.java.io/resource (str default-path s ".html")))]
     (atom
      {:layout  (tmpl "layout")
+      :index   (tmpl "index")
       :head    (tmpl "topics/head")
       :header  (tmpl "topics/header")
       :content (tmpl "topics/content")
@@ -58,33 +59,42 @@
 (defsnippet-lazy head :head [:head]
   [m]
   [[:meta (e/attr= :name "author")]]      (e/set-attr :content (m :author))
-  [[:meta (e/attr= :name "description")]] (e/set-attr :content (m :desc))
   [:title]                                (e/content  (m :title)))
 
 (defsnippet-lazy header :header [:header]
   [m]
-  [:.hob-date]   (e/content (date-now))
+  [:.hob-date]   (e/content (m :date))
   [:.hob-title]  (e/content (m :title))
-  [:.hob-desc]   (e/content (m :desc))
+  [:.hob-time :.minutes] (e/content (get-in m [:time :m]))
+  [:.hob-time :.seconds] (e/content (get-in m [:time :s]))
   [:.hob-author] (e/content (m :author)))
 
 (defsnippet-lazy main :content [:main]
-  [tree]
-  [:.hob-content] (e/content tree))
+  [m tree]
+  [:.hob-content] (e/content tree)
+  [:.hob-title]   (e/content (m :title))
+  [:.hob-topic]   (e/content (m :topic)))
 
 (defsnippet-lazy footer :footer [:footer]
   [m]
-  [:.hob-prev-lecture] (e/content (m :prev))
-  [:.hob-next-lecture] (e/content (m :next)))
+  [:.hob-associated] (e/content (m :assoc)))
 
 (deftemplate-lazy layout :layout
   [tree opts klass]
-  [:html]   (e/set-attr   :lang (System/getProperty "user.language"))
+  [:html]   (e/set-attr   :lang (opts :lang))
   [:body]   (e/add-class  (name klass))
   [:head]   (e/substitute (head   opts))
   [:header] (e/substitute (header opts))
-  [:main]   (e/substitute (main   tree))
+  [:main]   (e/substitute (main   opts tree))
   [:footer] (e/substitute (footer opts)))
+
+(deftemplate-lazy index :index
+  [tree opts klass]
+  [:html] (e/set-attr :lang (opts :lang))
+  [:body] (e/add-class (name klass))
+  [:.hob-content] (e/substitute tree)
+  [:.hob-stats :.topics] (e/substitute (opts :tn))
+  [:.hob-stats :.courses] (e/substitute (opts :cn)))
 
 
 ; Public API
@@ -95,12 +105,9 @@
   (do (set-templates tmpl-map)
       (clojure.string/join (layout tree options :course))))
 
-(defn generate-topic
-  "Takes an enlive-like AST as input and a map of options, and returns the html
-  generated with the topic-page layout as a string."
-  [tree options & tmpl-map])
-
 (defn generate-index
   "Takes an enlive-like AST as input and a map of options, and returns the html
   generated with the index-page layout as a string."
-  [tree options & tmpl-map])
+  [tree options tmpl-map]
+  (do (set-templates tmpl-map)
+      (clojure.string/join (index tree options :index))))
