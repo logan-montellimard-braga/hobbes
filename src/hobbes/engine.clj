@@ -139,11 +139,12 @@
                                   :attrs {:class "number"}})}
                  {:tag :ul
                   :content (map (fn [i]
-                                  {:tag :li :content (list
-                                   {:tag :a
-                                    :content (filename->title
-                                              (subs i 0 (.lastIndexOf i ".")))
-                                    :attrs {:href (str "topics/" dir "/" i)}})})
+                                  {:tag :li :content
+                                   (list {:tag :a
+                                          :content (filename->title
+                                                    (subs i 0 (.lastIndexOf i ".")))
+                                          :attrs {:href (str "topics/" dir "/"
+                                                             i)}})})
                                 f)})})
         coll)})
 

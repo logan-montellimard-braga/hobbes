@@ -1,7 +1,7 @@
 (ns hobbes.preprocessor
   "Engine used to preprocess input string for optimal parsing."
   (:require [clojure.string :as s]
-            [hobbes.utils :refer :all]))
+            [hobbes.utils   :refer :all]))
 
 
 ; Treat input formatting

@@ -64,7 +64,7 @@
   [coll]
   (let [strs (atom [])]
     (w/postwalk #(if (= java.lang.String (class %))
-                              (swap! strs conj %)) coll)
+                   (swap! strs conj %)) coll)
     (clojure.string/join " " @strs)))
 
 (defn count-words
@@ -173,7 +173,7 @@
   [^String jar-dir from to]
   (let [jar (JarFile. jar-dir)]
     (doseq [^JarEntry file (filter (fn [^JarEntry e]
-                                    (re-matches from (.getName e)))
+                                     (re-matches from (.getName e)))
                                    (enumeration-seq (.entries jar)))]
       (let [f (f/file to (.getName file))]
         (if (.isDirectory file)
