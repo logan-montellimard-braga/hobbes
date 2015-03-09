@@ -133,7 +133,7 @@
    (map (fn [[dir f]]
           {:tag :li :content
            (list {:tag :span :attrs {:class "topic"}
-                  :content (list dir
+                  :content (list (filename->title dir)
                                  {:tag :span
                                   :content (str (count f))
                                   :attrs {:class "number"}})}
