@@ -148,7 +148,7 @@
   [i]
   (let [locale (java.util.Locale/getDefault)
         months (.getMonths (java.text.DateFormatSymbols. locale))]
-    (get (into [] months) (- i 1))))
+    (get (vec months) (dec i))))
 
 (defn localized-day-name
   "Takes a day number (starting at 1 with monday) and returns the localized
@@ -156,7 +156,19 @@
   [i]
   (let [locale (java.util.Locale/getDefault)
         days (.getWeekdays (java.text.DateFormatSymbols. locale))]
-    (get (into [] (remove s/blank? days)) (mod i 7))))
+    (get (vec (remove s/blank? days)) (mod i 7))))
+
+(defn extract-date-components
+  "Takes a date or a timestamp and returns arbitrary, individual components."
+  [date]
+  {:d   (d-format "d" date)
+   :m   (d-format "M" date)
+   :y   (d-format "YYYY" date)
+   :t-h (d-format "H" date)
+   :t-m (d-format "mm" date)
+   :t-s (d-format "ss" date)
+   :mf  (localized-month-name (Integer. (d-format "M" date)))
+   :df  (localized-day-name (Integer. (d-format "u" date)))})
 
 ;;;
 ; File utilities
