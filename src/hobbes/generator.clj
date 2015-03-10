@@ -63,11 +63,18 @@
 
 (defsnippet-lazy header :header [:header]
   [m]
-  [:.hob-date]   (e/content (m :date))
-  [:.hob-title]  (e/content (m :title))
+  [:.hob-date :.d]       (e/content (get-in m [:date :d]))
+  [:.hob-date :.m]       (e/content (get-in m [:date :m]))
+  [:.hob-date :.y]       (e/content (get-in m [:date :y]))
+  [:.hob-date :.t-h]     (e/content (get-in m [:date :t-h]))
+  [:.hob-date :.t-m]     (e/content (get-in m [:date :t-m]))
+  [:.hob-date :.t-s]     (e/content (get-in m [:date :t-s]))
+  [:.hob-date :.mf]      (e/content (get-in m [:date :mf]))
+  [:.hob-date :.df]      (e/content (get-in m [:date :df]))
   [:.hob-time :.minutes] (e/content (get-in m [:time :m]))
   [:.hob-time :.seconds] (e/content (get-in m [:time :s]))
-  [:.hob-author] (e/content (m :author)))
+  [:.hob-title]          (e/content (m :title))
+  [:.hob-author]         (e/content (m :author)))
 
 (defsnippet-lazy main :content [:main]
   [m tree]
@@ -92,7 +99,7 @@
   [tree opts klass]
   [:html] (e/set-attr :lang (opts :lang))
   [:body] (e/add-class (name klass))
-  [:.hob-content] (e/substitute tree)
+  [:.hob-content] (e/content tree)
   [:.hob-stats :.topics] (e/substitute (opts :tn))
   [:.hob-stats :.courses] (e/substitute (opts :cn)))
 
