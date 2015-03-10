@@ -128,6 +128,11 @@
   [string]
   (s/trim (s/join string)))
 
+(defn d-format
+  "Returns the given date or timestamp formatted with fmt string."
+  [fmt date]
+  (.format (java.text.SimpleDateFormat. fmt) date))
+
 (defn date-now
   "Returns the current date as string in format day-month-year.
   May take an optional format string as argument to customize the formatting.
@@ -136,6 +141,22 @@
   (let [now (java.util.Date.)
         fmt (or format "dd-MM-yyyy")]
     (.format (java.text.SimpleDateFormat. fmt) now)))
+
+(defn localized-month-name
+  "Takes a month number (starting at 1 with january) and returns the localized
+  full name of it."
+  [i]
+  (let [locale (java.util.Locale/getDefault)
+        months (.getMonths (java.text.DateFormatSymbols. locale))]
+    (get (into [] months) (- i 1))))
+
+(defn localized-day-name
+  "Takes a day number (starting at 1 with monday) and returns the localized
+  full name of it."
+  [i]
+  (let [locale (java.util.Locale/getDefault)
+        days (.getWeekdays (java.text.DateFormatSymbols. locale))]
+    (get (into [] (remove s/blank? days)) (mod i 7))))
 
 ;;;
 ; File utilities
