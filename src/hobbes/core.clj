@@ -10,23 +10,40 @@
 
 (def ^:private default-settings
   "Map containing default hobbes settings."
-  {:input-dir  "topics"
-   :output-dir "_site"
-   :glob-format "*.{hob,hobbes,hob.txt,hobbes.txt}"
-   :mod-times-file ".modtimes.edn"})
+  {:input-dir      "topics"
+   :output-dir     "_site"
+   :config-dir     "_config"
+   :tmpl-dir       "template"
+   :abbreviations  "abbreviations.properties"
+   :variables      "variables.edn"
+   :glob-format    "*.{hob,hobbes,hob.txt,hobbes.txt}"
+   :mod-times-file ".modtimes.edn"
+   :wpm            200})
+
+(def ^:private special-files-glob
+  "String of glob pattern for all hobbes special files."
+  (str "{" (clojure.string/join "," [(default-settings :abbreviations)
+                                     (default-settings :variables)
+                                     (default-settings :glob-format)]) "}"))
 
 (defn- get-mod-times
   "Get the modification times of already compiled hob files as a map from
   default location."
   [path]
-  (try (eval-map (f/file path (default-settings :mod-times-file)))
-       (catch Exception e {})))
+  (eval-map (f/file path (default-settings :output-dir)
+                    (default-settings :mod-times-file))))
 
 (defn- write-mod-times
   "Sets the modification times of already compiled hob files as an edn map to
   default location."
   [path edn]
-  (spit (f/file path (default-settings :mod-times-file)) (pr-str edn)))
+  (spit (f/file path (default-settings :output-dir)
+                (default-settings :mod-times-file)) (pr-str edn)))
+
+(defn- mod-key
+  "Generates the storage key inside the modtimes edn file for a given file."
+  [file]
+  (str (f/name (f/parent file)) "/" (f/name file)))
 
 (defn- get-topics-dirs
   "Takes a string root path and returns a seq of all directories supposed to
@@ -52,66 +69,143 @@
   (let [from (f/file path (default-settings :input-dir) (f/name topic))
         to (f/file path (default-settings :output-dir) "topics" (f/name topic))]
     (f/copy-dir-into from to)
-    (dorun (map f/delete (get-hob-files-in-dir to)))))
+    (dorun (map f/delete
+                (get-hob-files-in-dir to special-files-glob)))))
 
-(defn- copy-template-assets
+(defn copy-template-assets
   "Moves template assets to outpout dir."
+  [path & [dir]]
+  (let [output (f/file path (default-settings :output-dir) "assets")
+        from (or dir (clojure.java.io/resource "default/template/assets"))]
+    (when (empty? (f/list-dir output))
+      (try
+        (f/copy-dir-into from output)
+        (catch Exception e
+          (if-let [tmpdir (f/temp-dir "hobbes_" "_tpl")]
+            (do (extract-dir-from-jar (get-running-jar)
+                                      #"default/template/assets/.+" tmpdir)
+                (f/copy-dir-into (f/file tmpdir "default" "template" "assets")
+                                 output)
+                (f/delete-dir tmpdir))
+            (throw Exception "Unable to create temp directory.")))))))
+
+(def ^:private tmpl-location
+  "User-defined names and relative paths."
+  {:layout "layout.html"
+   :index  "index.html"
+   :head   "topics/head.html"
+   :header "topics/header.html"
+   :content "topics/content.html"
+   :footer "topics/footer.html"})
+
+(defn- get-user-tmpls
+  "Takes a root path and returns a map of user-defined templates if present."
   [path]
-  (let [output (f/file path (default-settings :output-dir))]
-    (f/mkdir output)))
+  (into {}
+        (map (fn [[k f]] (let [tmpl (f/file path (default-settings :tmpl-dir)
+                                            (default-settings :tmpl-dir) f)]
+                           (when (f/file? tmpl) {k tmpl})))
+             tmpl-location)))
+
+(defn- remove-all-hob-exts
+  "Takes a file as input and returns its name, truncated of all hob extensions."
+  [f]
+  (second (re-matches #"(.+)\.hob(?:bes)?(?:\.txt)?" (f/base-name f))))
+
+(defn- get-file-infos
+  "Takes a file and returns a map containing various information about it."
+  [file tree]
+  {:title  (filename->title (remove-all-hob-exts file))
+   :topic  (f/base-name (f/parent file))
+   :date   (let [t (f/mod-time file)]
+             {:d (d-format "d" t) :m (d-format "M" t) :y (d-format "YYYY" t)
+              :t-h (d-format "H" t) :t-m (d-format "mm" t) :t-s (d-format "ss" t)
+              :mf (localized-month-name (Integer. (d-format "M" t)))
+              :df (localized-day-name (Integer. (d-format "u" t)))})
+   :lang   (System/getProperty "user.language")
+   :author (clojure.string/capitalize (System/getProperty "user.name"))
+   :words  (str (count-words (extract-strings tree)))
+   :time   (compute-estimated-reading-time (extract-strings tree)
+                                           (default-settings :wpm))
+   :assoc  (engine/to-links (map remove-all-hob-exts
+                                 (remove #(= file %)
+                                         (get-hob-files-in-dir (f/parent file)))))})
 
 (defn- transform
   "Takes a file as input and compiles it, returning a string."
-  [file]
-  (-> file
-      (slurp)
-      (pre/preprocess {} {})
-      (engine/parse)
-      (gen/generate-course {} {})))
+  [path file {:keys [abbrs vars]}]
+  (let [tree (engine/parse (pre/preprocess (slurp file) abbrs vars))
+        opts (get-file-infos file tree)]
+    (gen/generate-course
+     tree opts (get-user-tmpls (f/file path)))))
 
 (defn- compile-hob
   "Takes a root path and a file, and compiles the file, writing it to
   <output-dir>/topics/<topic>/<file>.html."
-  [path file]
-  (let [output (transform file)]
-    (spit (f/file path (default-settings :output-dir) "topics"
-                  (f/name (f/parent file))
-                  (str (second (re-matches #"(.+)\.hob(?:bes)?(?:\.txt)?"
-                                           (f/name file)))
-                       ".html"))
-          output)))
+  [path file opts]
+  (let [basename (remove-all-hob-exts file)
+        output-f (f/file path (default-settings :output-dir) "topics"
+                         (f/name (f/parent file)) (str basename ".html"))
+        output (transform path file opts)]
+    (spit output-f output)))
 
-(defn- make-index-list
-  "Takes a root path and returns a list of enlive-compatible maps of topics
-  and courses in them. Used to send to gen/generate-index."
-  [path]
-  (let [topics (get-topics-dirs (f/file path (default-settings :output-dir)))
-        src (fn [f] (str "topics/" (f/name (f/parent f)) "/" (f/name f) ".html"))
-        li  (fn [f] {:tag :li :content {:tag :a :content (f/base-name f true)
-                                        :attrs {:href (src f)}}})]
-    (flatten
-     (map (fn [t] (list {:tag :h3 :content (f/base-name t)}
-                        {:tag :ul
-                         :content (map li (get-hob-files-in-dir t "*.html"))}))
-          topics))))
+(defn- get-param-file
+  "Takes a root path, a key for the config directory, the key to find inside it
+  and the function needed to parse it, and returns the result."
+  [path config k f]
+  (f (f/file path (default-settings config "") (default-settings k))))
 
-(defn- transform-all
+(defn transform-all
   "Takes a root path as input and converts all hob files in the
   <input-dir>/<topic> directories, effectively generating the final website."
   [path]
-  (let [mods (atom (get-mod-times path))]
+  (let [mods  (atom (get-mod-times path))
+        abbrs (get-param-file path :config-dir :abbreviations parse-props)
+        vars  (get-param-file path :config-dir :variables eval-map)]
     (doseq [topic (get-topics-dirs path)]
       (copy-folder-with-assets path topic)
-      (let [hobs (get-hob-files-in-dir topic)]
-        (dorun (pmap
-                 (fn [f] (when (> (f/mod-time f)
-                                  (@mods (str (f/name topic) "/" (f/name f)) 0))
-                           (compile-hob path f)
-                           (swap! mods assoc (str (f/name topic) "/" (f/name f))
-                                  (f/mod-time f))))
-                 hobs))))
+      (let [hobs (get-hob-files-in-dir topic)
+            l-ab (merge abbrs (get-param-file topic nil :abbreviations parse-props))
+            l-va (merge vars (get-param-file topic nil :variables eval-map))]
+        (dorun (pmap (fn [f] (when (> (f/mod-time f) (@mods (mod-key f) 0))
+                               (compile-hob path f {:abbrs l-ab :vars l-va})
+                               (swap! mods assoc (mod-key f) (f/mod-time f))))
+                     hobs))))
     (write-mod-times path @mods)))
+
+(defn- make-index-struct
+  "Takes a root path and returns a list of the form [dir '(files)] for each
+  output'd topic dir in root path. Used to send to engine/to-index-struct."
+  [path]
+  (let [topics (get-topics-dirs (f/file path (default-settings :output-dir)))]
+    (remove (fn [[_ f]] (empty? f))
+            (map (fn [t] [(f/base-name t)
+                          (map f/base-name (get-hob-files-in-dir t "*.html"))])
+                 topics))))
+
+(defn make-index
+  "Takes a root path and generates the index file of the compiled site."
+  [path]
+  (let [idx (make-index-struct path)
+        topics-n (str (count idx))
+        courses-n (str (reduce + (map (fn [[_ files]] (count files)) idx)))
+        idx-ast (engine/to-index-struct idx)
+        out (gen/generate-index idx-ast
+                                {:tn topics-n :cn courses-n
+                                 :lang (System/getProperty "user.language")}
+                                (get-user-tmpls (f/file path )))]
+    (spit (f/file path (default-settings :output-dir) "index.html") out)))
 
 (defn -main
   "Main entry point to Hobbes"
-  [& args])
+  [folder & args]
+  (when-not (f/directory? folder)
+    (throw (java.io.FileNotFoundException. (str folder " does not exists."))))
+  (let [user-assets (f/file folder (default-settings :config-dir)
+                            (default-settings :tmpl-dir) "assets")]
+    (if (f/directory? user-assets)
+      (copy-template-assets folder user-assets)
+      (copy-template-assets folder))
+    (transform-all folder)
+    (make-index folder)
+    (shutdown-agents)))
