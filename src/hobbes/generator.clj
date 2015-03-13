@@ -97,10 +97,20 @@
 
 (deftemplate-lazy index :index
   [tree opts klass]
-  [:html] (e/set-attr :lang (opts :lang))
-  [:body] (e/add-class (name klass))
-  [:.hob-content] (e/content tree)
-  [:.hob-stats :.topics] (e/substitute (opts :tn))
+  [:html]                 (e/set-attr :lang (opts :lang))
+  [:body]                 (e/add-class (name klass))
+  [:.hob-date :.d]        (e/content (get-in opts [:date :d]))
+  [:.hob-date :.m]        (e/content (get-in opts [:date :m]))
+  [:.hob-date :.y]        (e/content (get-in opts [:date :y]))
+  [:.hob-date :.t-h]      (e/content (get-in opts [:date :t-h]))
+  [:.hob-date :.t-m]      (e/content (get-in opts [:date :t-m]))
+  [:.hob-date :.t-s]      (e/content (get-in opts [:date :t-s]))
+  [:.hob-date :.mf]       (e/content (get-in opts [:date :mf]))
+  [:.hob-date :.df]       (e/content (get-in opts [:date :df]))
+  [:.hob-content]         (e/content tree)
+  [:.hob-author]          (e/content (opts :author))
+  [[:meta (e/attr= :name "author")]] (e/set-attr :content (opts :author))
+  [:.hob-stats :.topics]  (e/substitute (opts :tn))
   [:.hob-stats :.courses] (e/substitute (opts :cn)))
 
 
