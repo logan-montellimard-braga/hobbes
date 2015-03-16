@@ -72,22 +72,20 @@
     (dorun (map f/delete
                 (get-hob-files-in-dir to special-files-glob)))))
 
-(defn copy-template-assets
-  "Moves template assets to outpout dir."
-  [path & [dir]]
-  (let [output (f/file path (default-settings :output-dir) "assets")
-        from (or dir (clojure.java.io/resource "default/template/assets"))]
-    (when (empty? (f/list-dir output))
-      (try
-        (f/copy-dir-into from output)
-        (catch Exception e
-          (if-let [tmpdir (f/temp-dir "hobbes_" "_tpl")]
-            (do (extract-dir-from-jar (get-running-jar)
-                                      #"default/template/assets/.+" tmpdir)
-                (f/copy-dir-into (f/file tmpdir "default" "template" "assets")
-                                 output)
-                (f/delete-dir tmpdir))
-            (throw Exception "Unable to create temp directory.")))))))
+(defn dump-resource
+  "Takes an output path and a jar-resource file/folder to extract and dumps it."
+  [output resource]
+  (let [from (clojure.java.io/resource resource)
+        to (f/file output)
+        re (re-pattern (str resource "/.+"))]
+    (try
+      (f/copy-dir-into from to)
+      (catch Exception e
+        (if-let [tmpdir (f/temp-dir "hobbes_" "_dump")]
+          (do (extract-dir-from-jar (get-running-jar) re tmpdir)
+              (f/copy-dir-into (f/file tmpdir resource) to)
+              (f/delete-dir tmpdir))
+          (throw Exception "Unable to create temp directory."))))))
 
 (def ^:private tmpl-location
   "User-defined names and relative paths."
@@ -102,7 +100,7 @@
   "Takes a root path and returns a map of user-defined templates if present."
   [path]
   (into {}
-        (map (fn [[k f]] (let [tmpl (f/file path (default-settings :tmpl-dir)
+        (map (fn [[k f]] (let [tmpl (f/file path (default-settings :config-dir)
                                             (default-settings :tmpl-dir) f)]
                            (when (f/file? tmpl) {k tmpl})))
              tmpl-location)))
@@ -117,11 +115,7 @@
   [file tree]
   {:title  (filename->title (remove-all-hob-exts file))
    :topic  (f/base-name (f/parent file))
-   :date   (let [t (f/mod-time file)]
-             {:d (d-format "d" t) :m (d-format "M" t) :y (d-format "YYYY" t)
-              :t-h (d-format "H" t) :t-m (d-format "mm" t) :t-s (d-format "ss" t)
-              :mf (localized-month-name (Integer. (d-format "M" t)))
-              :df (localized-day-name (Integer. (d-format "u" t)))})
+   :date   (extract-date-components (f/mod-time file))
    :lang   (System/getProperty "user.language")
    :author (clojure.string/capitalize (System/getProperty "user.name"))
    :words  (str (count-words (extract-strings tree)))
@@ -174,26 +168,29 @@
     (write-mod-times path @mods)))
 
 (defn- make-index-struct
-  "Takes a root path and returns a list of the form [dir '(files)] for each
+  "Takes a list of topics and returns a list of the form [dir '(files)] for each
   output'd topic dir in root path. Used to send to engine/to-index-struct."
-  [path]
-  (let [topics (get-topics-dirs (f/file path (default-settings :output-dir)))]
-    (remove (fn [[_ f]] (empty? f))
-            (map (fn [t] [(f/base-name t)
-                          (map f/base-name (get-hob-files-in-dir t "*.html"))])
-                 topics))))
+  [topics]
+  (remove (fn [[_ f]] (empty? f))
+          (map (fn [t] [(f/base-name t)
+                        (map f/base-name (get-hob-files-in-dir t "*.html"))])
+               topics)))
 
 (defn make-index
   "Takes a root path and generates the index file of the compiled site."
   [path]
-  (let [idx (make-index-struct path)
+  (let [idx (make-index-struct (get-topics-dirs
+                                (f/file path (default-settings :output-dir))))
         topics-n (str (count idx))
         courses-n (str (reduce + (map (fn [[_ files]] (count files)) idx)))
         idx-ast (engine/to-index-struct idx)
         out (gen/generate-index idx-ast
                                 {:tn topics-n :cn courses-n
-                                 :lang (System/getProperty "user.language")}
-                                (get-user-tmpls (f/file path )))]
+                                 :lang (System/getProperty "user.language")
+                                 :author (clojure.string/capitalize
+                                          (System/getProperty "user.name"))
+                                 :date (extract-date-components (java.util.Date.))}
+                                (get-user-tmpls (f/file path)))]
     (spit (f/file path (default-settings :output-dir) "index.html") out)))
 
 (defn -main
@@ -202,10 +199,13 @@
   (when-not (f/directory? folder)
     (throw (java.io.FileNotFoundException. (str folder " does not exists."))))
   (let [user-assets (f/file folder (default-settings :config-dir)
-                            (default-settings :tmpl-dir) "assets")]
+                            (default-settings :tmpl-dir) "assets")
+        output (f/file folder (default-settings :output-dir) "assets")]
+    (print "Starting compilation...")
     (if (f/directory? user-assets)
-      (copy-template-assets folder user-assets)
-      (copy-template-assets folder))
+      (f/copy-dir-into user-assets output)
+      (dump-resource output "default/template/assets"))
     (transform-all folder)
     (make-index folder)
+    (println "    DONE!")
     (shutdown-agents)))
