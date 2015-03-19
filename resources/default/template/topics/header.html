@@ -1,0 +1,32 @@
+<header id="top">
+  <!-- JS Warning -->
+  <div id="js-warning" class="container">
+    <div class="row text-center">
+      <div class="col-xs-10 col-xs-offset-1">
+        Merci d'activer <strong>JavaScript</strong> dans votre navigateur afin de b&eacute;n&eacute;ficier de toutes les fonctionnalit&eacute;s.
+      </div>
+    </div>
+  </div>
+  <script>
+    var warning = document.getElementById("js-warning");
+    warning.parentElement.removeChild(warning);
+  </script>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <h1>
+          <span id="date" class="hob-date small"><span class="df"></span> <span class="d"></span> <span class="mf"></span> <span class="y"></span></span>
+          <br>
+          <span id="main_title" class="hob-title"></span>
+          <br>
+          <span id="description" class="small">Temps de lecture estim&eacute; à <span class="hob-time"><span class="minutes"></span> minutes et <span class="seconds"></span> secondes</span>.</span>
+        </h1>
+        <h2><span id="author" class="hob-author"></span></h2>
+
+        <a href="../../index.html" class="button">Accueil</a>
+        <a href="#main_text" class="button smooth">Lecture</a>
+      </div>
+    </div>
+  </div>
+</header>

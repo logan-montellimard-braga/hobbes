@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Logan Braga, Marie Nuel, Maxime Guillermet">
+    <meta name="description" content="Hobbes, outil de prise de notes pour les étudiants.">
+    <meta name="keywords" content="Hobbes notes cours étudiants compilation clojure open-source gratuit">
+
+    <title></title>
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="../../assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+  </head>
+
+  <body>
+    <!-- JS Warning -->
+    <div id="js-warning" class="container">
+      <div class="row text-center">
+        <div class="col-xs-10 col-xs-offset-1">
+          Merci d'activer <strong>JavaScript</strong> dans votre navigateur afin de b&eacute;n&eacute;ficier de toutes les fonctionnalit&eacute;s.
+        </div>
+      </div>
+    </div>
+    <script>
+      var warning = document.getElementById("js-warning");
+      warning.parentElement.removeChild(warning);
+    </script>
+
+    <header id="top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <h1>
+              <span id="main_title hob-title"></span>
+            </h1>
+            <h2><span id="author" class="hob-author"></span></h2>
+            <a href="index.html" class="button pushed">Accueil</a>
+            <a href="#main_text" class="button smooth">Cours</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="botButton">
+      <a class="hidden-xs button scrollToTop smooth" href="#top">Top</a>
+      <a class="hidden-xs button nightButton" href="#">Nuit</a>
+    </div>
+
+    <div id="main_text" class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+          <h1>Liste des cours</h1>
+          <div class="courses hob-content">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/js/lib/script.js"></script>
+  </body>
+</html>
