@@ -7,6 +7,13 @@
             [clojure.edn     :as edn])
   (:import  [java.util.jar JarFile JarEntry]))
 
+(defn exit
+  "Exits the JVM with a given status number (in 0..255) and a message to print."
+  [status msg]
+  (println msg)
+  ; (throw (Exception. (str status))))
+  (System/exit status))
+
 (defn name-or-re
   "If input is a regex, returns it. Otherwise, returns (name input)."
   [input]
