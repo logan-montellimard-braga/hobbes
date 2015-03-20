@@ -42,8 +42,9 @@
          :glob-format "*.{hob,hobbes,hob.txt,hobbes.txt}"
          :wpm         200}))
 
-(defn file-chooser [e]
+(defn file-chooser
   "Button action - opens a file chooser window."
+  [e]
   (let [frame (to-frame e)
         el    (id-of e)
         el-sel (keyword (str "#" (name el)))]
@@ -55,13 +56,14 @@
                                (config! (select frame [el-sel]) :text
                                         (str "..." (f/base-name file)))))))
 
-(defn do-action [e]
+(defn do-action
   "Switch hobbes.runner action based on event."
+  [e]
   (let [action (id-of e)]
     (case action
       :compile (cond
-                 (nil? (@state :input)) (alert "L'entrée ne doit pas être nulle")
-                 (nil? (@state :output)) (alert "La sortie ne doit pas être nulle")
+                 (nil? (@state :input)) (alert "L'entrée ne doit pas être vide")
+                 (nil? (@state :output)) (alert "La sortie ne doit pas être vide")
                  :else (do
                          (when (@state :force) (run/delete-modtimes-file @state))
                          (cond
