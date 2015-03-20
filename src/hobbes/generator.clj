@@ -19,7 +19,6 @@
         tmpl (fn [s] (clojure.java.io/resource (str default-path s ".html")))]
     (atom
      {:layout  (tmpl "layout")
-      :standalone (tmpl "standalone")
       :index   (tmpl "index")
       :head    (tmpl "topics/head")
       :header  (tmpl "topics/header")
