@@ -72,7 +72,7 @@
     ""
     "Example commands:"
     "  `hobbes compile my_courses/ -w 350`"
-    "  `hobbes compile -i my_courses/course.hob -o compiled.hob`"
+    "  `hobbes compile -i my_courses/course.hob -o compiled.html`"
     "  `hobbes dump my_config/`"
     "  `hobbes dump --output=my_config/`"
     ""
