@@ -23,25 +23,27 @@
   once parsed (use of functions instead of direct map to allow for closures
   from the parser)."
   (let [null-f (fn [& _] nil)]
-    [[:a      #"(?i)(?:(^|.*\s))(https?://\S+)(.*)"
-      (fn [l]   {:href l :class "external"})]
-     [:a      #"(?:(^|.*\s))->([^\s\.]+)(.*)"
-      (fn [l]   {:href (str l ".html") :class "internal"})]
-     [:strong #"(.*)\*([^\*]+)\*(.*)" null-f]
-     [:em     #"(.*)/([^/]+)/(.*)"    null-f]
-     [:mark   #"(.*)\^([^^]+)\^(.*)"  null-f]
-     [:u      #"(.*)_([^_]+)_(.*)"    null-f]
-     [:del    #"(.*)--([^--]+)--(.*)" null-f]
+    [[:code   #"(.*)(?<!\\)`(.+)(?<!\\)`(.*)"    null-f]
      [:img    #"(?:(^|.*\s))(\S+(?:\.(?:png|jpe?g|gif|bmp)))($|\s.*)"
       (fn [i] {:src i :alt i})]
      [:video
       #"(?:(^|.*\s))(\S+(?:\.(?:mp4|avi|wmv|webm|mov|3gp|ogg|ogv)))($|\s.*)"
       (fn [& _] {:controls nil})]
-     [:span   #"(.*)#\?\?+()(.*)"
+     [:a      #"(?i)(?:(^|.*\s))(https?://\S+)(.*)"
+      (fn [l]   {:href l :class "external"})]
+     [:a      #"(?:(^|.*\s))(?<!\\)->([^\s\.]+)(.*)"
+      (fn [l]   {:href (str l ".html") :class "internal"})]
+     [:strong #"(.*)(?<!\\)\*(.+)(?<!\\)\*(.*)" null-f]
+     [:em     #"(.*)(?<!\\)/(.+)(?<!\\)/(.*)"   null-f]
+     [:mark   #"(.*)(?<!\\)%(.+)(?<!\\)%(.*)"   null-f]
+     [:sup    #"(.*)(?<!\\)\^(.+)(?<!\\)\^(.*)" null-f]
+     [:sub    #"(.*)(?<!\\)<(.+)(?<!\\)>(.*)"   null-f]
+     [:u      #"(.*)(?<!\\)_(.+)(?<!\\)_(.*)"   null-f]
+     [:del    #"(.*)(?<!\\)--(.+)(?<!\\)--(.*)" null-f]
+     [:span   #"(.*)(?<!\\)#\?\?+()(.*)"
       (fn [& _] {:class "missing"})]
      [:span   #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)"
-      (fn [& _] {:class "example"})]
-     [:code   #"(.*)<([^>]+)>(.*)"    null-f]]))
+      (fn [& _] {:class "example"})]]))
 
 (defn- parse-spans
   "Parse a string to delimit spans (bold, em, ...).
