@@ -45,6 +45,11 @@
      [:span   #"(?i)(.*)\(ex(?:e(?:m(?:p(?:l(?:e)?)?)?)?)?\s*:\s*(.+)\)(.*)"
       (fn [& _] {:class "example"})]]))
 
+(defn- remove-escape-sequences
+  "Remove escape sequences from input."
+  [s]
+  (clojure.string/replace s #"\\(.)" "$1"))
+
 (defn- parse-spans
   "Parse a string to delimit spans (bold, em, ...).
   Returns a constructed map output in enlive format containing spans."
@@ -63,7 +68,7 @@
                         (parse-spans c))
              :attrs (attrs c)}
             (parse-spans after)))
-    input))
+    (remove-escape-sequences input)))
 
 (def ^:private block-transforms
   "Instaparse AST transformations to apply to blocks.

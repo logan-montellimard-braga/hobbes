@@ -24,14 +24,14 @@
     (is (= {:foo :bar}
            (add-prefix-to-map-keys {:foo :bar}))))
   (testing "Map with empty prefix."
-    (is (= {"foo" :bar}
-           (add-prefix-to-map-keys {:foo :bar} ""))))
+    (is (= (str #"(?<!\\)foo(?=\s|\.|$)")
+           (str (first (keys (add-prefix-to-map-keys {:foo :bar} "")))))))
   (testing "Empty map with prefix"
     (is (= {}
            (add-prefix-to-map-keys {} "foo"))))
   (testing "Map and prefix."
-    (is (= {"pre-foo" :bar, "pre-baz" :quux}
-           (add-prefix-to-map-keys {:foo :bar :baz :quux} "pre-")))))
+    (is (= (str #"(?<!\\)pre-foo(?=\s|\.|$)")
+           (str (first (keys (add-prefix-to-map-keys {:foo :bar} "pre-"))))))))
 
 (deftest lower-keyword-test
   (testing "Keyword input"

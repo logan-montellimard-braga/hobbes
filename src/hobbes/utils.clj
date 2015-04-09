@@ -11,16 +11,16 @@
   "Exits the JVM with a given status number (in 0..255) and a message to print."
   [status msg]
   (println msg)
-  ; (throw (Exception. (str status))))
   (System/exit status))
 
+; Implementation subject to change
 (defn name-or-re
   "If input is a regex, returns it. Otherwise, returns (name input)."
   [input]
   (cond
     (= java.util.regex.Pattern (class input)) input
-    (= clojure.lang.PersistentList (class input)) (str (eval input) " ")
-    :else (str (name input) " ")))
+    (= clojure.lang.PersistentList (class input)) (str (eval input))
+    :else (str (name input) "")))
 
 (defn map-replace
   "Takes a map of {k v} and a string and replaces every occurence of k with v
@@ -35,13 +35,15 @@
 
 (defn add-prefix-to-map-keys
   "Takes a map and a prefix string, and adds the prefix to each key of the map,
-  converting them to strings.
+  converting them to regexs.
+  Also prepends the escape sequences matcher.
   Returns the treated map."
   ([m] m)
   ([m prefix]
    (into (empty m)
          (for [[k v] m]
-           [(str prefix (name k)) v]))))
+           [(re-pattern (str "(?<!\\\\)" prefix (name k) "(?=\\s|\\.|$)"))
+            v]))))
 
 (defn flatten-if-seq
   "Takes a seq or a non-seq elem, and flattens it if it is a seq, otherwise
