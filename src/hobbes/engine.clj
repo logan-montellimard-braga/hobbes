@@ -29,6 +29,8 @@
      [:video
       #"(?:(^|.*\s))(\S+(?:\.(?:mp4|avi|wmv|webm|mov|3gp|ogg|ogv)))($|\s.*)"
       (fn [& _] {:controls nil})]
+     [:a      #"(?i)(?:(^|.*\s))([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,24})\b(.*)"
+      (fn [l]   {:href (str "mailto:" l) :class "mail"})]
      [:a      #"(?i)(?:(^|.*\s))(https?://\S+)(.*)"
       (fn [l]   {:href l :class "external"})]
      [:a      #"(?:(^|.*\s))(?<!\\)=>(.+)(?<!\\)<=(.*)"
