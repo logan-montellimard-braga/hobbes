@@ -25,7 +25,7 @@ Coming soon. Stay tuned on [Hobbes website](http://hobbes-lang.org).
 
 + To get help `hobbes help`, `hobbes -h`, `hobbes --help`
 + To compile a folder containing courses in hob format `hobbes compile path/to/the/folder -o destination/path`
-+ To compile a folder with specific options `hobbes compile -i path/to/the/folder -output=destination/path -w 420 -u "Your Full Name" --force` (count 420 words per minute for estimated reading time, use "Your Full Name" as author's name, and force compilation of already up-to-date files)
++ To compile a folder with specific options `hobbes compile -i path/to/the/folder --output=destination/path -w 420 -u "Your Full Name" --force` (count 420 words per minute for estimated reading time, use "Your Full Name" as author's name, and force compilation of already up-to-date files)
 + To compile a single file and spit its result to STDOUT `hobbes compile path/to/the/file.hob`
 + To dump default config in a directory `hobbes dump destination/path`
 
