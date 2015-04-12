@@ -1,4 +1,4 @@
-(defproject hobbes "0.2.0-SNAPSHOT"
+(defproject hobbes "0.1.0-SNAPSHOT"
   :description "Compiler transforming courses in .hob format to beautiful, local, static sites."
   :url "http://hobbes-lang.org"
   :license {:name "GNU/GPL v3"
