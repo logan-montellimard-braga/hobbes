@@ -31,6 +31,8 @@
       (fn [& _] {:controls nil})]
      [:a      #"(?i)(?:(^|.*\s))(https?://\S+)(.*)"
       (fn [l]   {:href l :class "external"})]
+     [:a      #"(?:(^|.*\s))(?<!\\)->(.+)(?<!\\)<-(.*)"
+      (fn [l]   {:href (str l ".html") :class "internal"})]
      [:a      #"(?:(^|.*\s))(?<!\\)->([^\s\.]+)(.*)"
       (fn [l]   {:href (str l ".html") :class "internal"})]
      [:strong #"(.*)(?<!\\)\*(.+)(?<!\\)\*(.*)" null-f]
