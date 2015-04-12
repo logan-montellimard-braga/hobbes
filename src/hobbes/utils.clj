@@ -122,7 +122,7 @@
         host)
       (filename->title url))
     (catch Exception e
-      url)))
+      (filename->title url))))
 
 (defn dasherize
   "Takes a string as input and lowercases it, converting all spaces to dashes.
