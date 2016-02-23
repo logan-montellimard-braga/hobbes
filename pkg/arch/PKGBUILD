@@ -1,0 +1,28 @@
+# maintainer: Logan Braga <braga.logan@gmail.com>
+# Contributor: seyt <seyt@protonmail.ch>
+pkgname=hobbes
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Hobbes is an applicative suite made to greatly improve taking lectures notes. "
+arch=(any)
+url="http://hobbes-lang.org/"
+license=('GPL')
+groups=('')
+provides=('')
+depends=('jdk8-openjdk')
+optdepends=('ncurses')
+makedepends=('git')
+conflicts=('')
+replaces=('')
+backup=('')
+install=
+source=('git+https://github.com/seytz/hobbes.git')
+md5sums=('SKIP')
+
+
+package() {
+  cp $srcdir/hobbes/pkg/arch/bin/hobbes /usr/bin/hobbes
+  # mkdir /usr/share/doc/hobbes/
+  # cp "$srcdir/doc/hobbes.html" /usr/share/doc/hobbes/hobbes.html
+}
+
