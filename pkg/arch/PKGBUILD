@@ -1,0 +1,27 @@
+# Maintainer: Logan Braga <braga.logan@gmail.com>
+# Contributor: seyt <seyt@protonmail.ch>
+pkgname=hobbes
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Hobbes is an applicative suite made to greatly improve taking lectures notes. "
+arch=(any)
+url="http://hobbes-lang.org/"
+license=('GPL')
+groups=
+provides=
+depends=('openjdk')
+optdepends=
+makedepends=
+conflicts=
+replaces=
+backup=('etc/palne/palne.conf')
+install=
+source=('')
+md5sums=('63222E931F30E9C268D240934140F2CD')
+
+build() {
+  cd $srcdir/$pkgname-$pkgver
+  ./configure --prefix=/usr
+  make || return 1
+  make prefix=$pkgdir/usr install
+}
