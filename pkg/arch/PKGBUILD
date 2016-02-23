@@ -22,7 +22,7 @@ md5sums=('SKIP')
 
 package() {
   cp $srcdir/hobbes/pkg/arch/bin/hobbes /usr/bin/hobbes
- # mkdir /usr/share/doc/hobbes/
- # cp "$srcdir/doc/hobbes.html" /usr/share/doc/hobbes/hobbes.html
+  # mkdir /usr/share/doc/hobbes/
+  # cp "$srcdir/doc/hobbes.html" /usr/share/doc/hobbes/hobbes.html
 }
 
